@@ -1,0 +1,88 @@
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+Ping            PIN     15
+PingServo       PIN     14
+LeftServo       PIN     13
+RightServo      PIN     12
+
+rawDist         VAR     Word
+sweepcount      VAR     Word
+x               VAR     Byte
+pulseCount      VAR     Byte
+
+
+Main:
+ FOR sweepcount = 350 TO 1150 STEP 200
+  FOR x = 0 TO 5
+    PULSOUT 14, sweepcount
+    PAUSE 20
+  NEXT
+  GOSUB GetSonar
+ NEXT
+
+ FOR sweepcount = 950 TO 550 STEP 200
+  FOR x = 0 TO 5
+    PULSOUT 14, sweepcount
+    PAUSE 20
+  NEXT
+  GOSUB GetSonar
+ NEXT
+GOTO Main
+
+GetSonar:
+  LOW Ping
+  PULSOUT Ping, 5
+  PULSIN Ping, 1, rawDist
+
+  IF (rawDist < 600) THEN
+    IF (sweepcount < 750) THEN
+      GOSUB Turn_Left
+    ELSEIF (sweepcount > 750) THEN
+      GOSUB Turn_Right
+    ELSE
+      GOSUB Back_Up
+    ENDIF
+  ELSE
+    GOSUB Forward_Pulse
+  ENDIF
+
+RETURN
+
+Forward_Pulse:
+  FOR pulsecount = 0 TO 5
+    PULSOUT LeftServo, 850
+    PULSOUT RightServo, 650
+    PAUSE 20
+  NEXT
+RETURN
+
+Turn_Left:
+  FOR pulseCount = 0 TO 10
+    PULSOUT LeftServo, 650
+    PULSOUT RightServo, 650
+    PAUSE 20
+  NEXT
+RETURN
+
+Turn_Right:
+  FOR pulseCount = 0 TO 10
+    PULSOUT LeftServo, 850
+    PULSOUT RightServo, 850
+    PAUSE 20
+  NEXT
+RETURN
+
+Back_Up:
+ FOR pulseCount = 0 TO 3
+  PULSOUT LeftServo, 750
+  PULSOUT RightServo, 750
+  PAUSE 20
+ NEXT
+
+  FOR pulseCount = 0 TO 7
+    PULSOUT LeftServo, 650
+    PULSOUT RightServo, 850
+    PAUSE 20
+  NEXT
+RETURN

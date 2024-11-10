@@ -1,0 +1,2 @@
+AP_SSID = "g00gleeeyes"
+AP_PASSWORD = "51538688"

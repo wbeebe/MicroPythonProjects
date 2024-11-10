@@ -1,0 +1,284 @@
+' =========================================================================
+'
+'   File...... RoamingWithPING.bs2
+'   Purpose... Roam And Scan Using PING))) Mounting Bracket
+'   Author.... Parallax, Inc.
+'   E-mail.... support@parallax.com
+'   Started...
+'   Updated... 12-21-2005
+'
+'   {$STAMP BS2}
+'   {$PBASIC 2.5}
+'
+' =========================================================================
+
+
+' -----[ Program Description ]---------------------------------------------
+
+' This programs demonstrates roaming with the Parallax PING))) Mounting
+' Bracket, which allows you to pan-scan with your Parallax PING))) sensor.
+'
+' This program assumes you have already set your BOE-Bot up for roaming
+' with IR sensors.  You must also have the PING))) Mounting bracket
+' installed as per the instructions, with the servo connected to P14 and
+' the PING))) sensor connected to P15.
+'
+' Due to the way the PING))) bracket mounts you may have to trim your IR
+' detectors down so that they don't stick up in the way of the moving
+' PING))) bracket as it rotates.  It's best to angle them off at 45
+' degree angles so that the BOE-Bot doesn't run into anything while
+' moving along a wall at a narrow angle.
+'
+' The BOE-Bot will now roam around and when it senses an object, it will
+' scan within a 180 degree field of view for the clearest path, which it
+' will then navigate scanning for an object again.  The IR Sensors prevent
+' hitting a wall when coming at it from a narrow angle where the PING)))
+' might have trouble seeing it due to the lack of reflection of sound.
+'
+' Calibration is important to this code working properly.  If you do not
+' have the correct values for your servos then you may get strange results
+' from your BOE-Bot.  The necessary calibration information is listed in
+' each section of the code where it is required.
+
+' -----[ Revision History ]------------------------------------------------
+
+' This code is basically a modified version of the Roaming With IR code
+' from the Robotics With The BOE-Bot Manual, written by Andy Lindsay.
+' Much of the original code was left untouched so you can see how it was
+' altered.
+
+
+' -----[ I/O Definitions ]-------------------------------------------------
+
+Piezo           PIN     4               ' Piezo Speaker
+RightServo      PIN     12              ' Right Servo
+LeftServo       PIN     13              ' Left Servo
+PingServo       PIN     14              ' PING))) Servo
+Ping            PIN     15              ' PING))) Sensor
+
+
+' -----[ Variables ]-------------------------------------------------------
+
+irDetectLeft    VAR     Bit             ' Variable For Left IR Input
+irDetectRight   VAR     Bit             ' Variable For Right IR Input
+pulseCount      VAR     Byte            ' Used For Measuring Turns
+distance        VAR     Word            ' Current Distance Of Object
+oldDistance     VAR     Word            ' Old Distance Value
+counter         VAR     Word            ' PING))) Cycle Counter
+task            VAR     Nib             ' Current Task
+
+
+' -----[ Initialization ]--------------------------------------------------
+
+FREQOUT Piezo, 2000, 3000               ' Signal Program Start/Reset
+
+
+' -----[ Program Code ]----------------------------------------------------
+
+Main:
+DO
+
+  FREQOUT 8, 1, 38500                   ' Emit 38.5 kHz IR To Left
+  irDetectLeft = IN9                    ' Store IR Detection Values
+
+  FREQOUT 2, 1, 38500                   ' Emit 38.5 kHz IR To Right
+  irDetectRight = IN0                   ' Store IR Detection Values
+
+  IF (irDetectLeft = 0) AND (irDetectRight = 0) THEN
+    GOSUB Ping_Around                   ' Object Detected via IR Forward
+  ELSEIF (irDetectLeft = 0) THEN
+    GOSUB Ping_Around                   ' Object Detected via IR Left
+  ELSEIF (irDetectRight = 0) THEN
+    GOSUB Ping_Around                   ' Object Detected via IR Right
+  ENDIF
+
+  counter = counter + 1                 ' Increment Passive Counter
+
+  IF counter > 10 THEN                  ' Wait For 10 Servo Pulses
+    GOSUB Ping_Out                      ' Activate PING)))
+  ENDIF
+
+  IF (distance > 30) THEN               ' Is Object Farther Than 30 cm?
+    GOSUB Forward_Pulse                 ' If Yes Go Forward
+  ELSE
+    GOSUB Ping_Around                   ' Otherwise Scan For Clear Path
+  ENDIF
+
+LOOP
+
+
+' -----[ Subroutines ]-----------------------------------------------------
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUES TO MAKE YOUR BOE-BOT MOVE FORWARD  *
+' * WHILE THE PING))) IS FACING FORWARD.                                  *
+' *************************************************************************
+
+Forward_Pulse:                          ' Send A Single Forward Pulse
+  PULSOUT PingServo, 750                ' Ping Servo Forward Pulse Value
+  PULSOUT LeftServo, 850                ' Left Servo Forward Pulse Value
+  PULSOUT RightServo, 650               ' Right Servo Forward Pulse Value
+  PAUSE 20                              ' Refresh Delay
+  RETURN
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUES TO MAKE YOUR BOE-BOT TURN LEFT 90  *
+' * DEGREES.  USE THE SAME VALUE AS ABOVE FOR THE PING))) BRACKET SERVO.  *
+' *************************************************************************
+
+Turn_Left:                              ' Left Turn, About 45 Degrees
+  FOR pulseCount = 0 TO 7               ' Number Of Pulses To Turn
+    PULSOUT PingServo, 750              ' Ping Servo Forward Pulse Value
+    PULSOUT LeftServo, 650              ' Left Servo Left Pulse Value
+    PULSOUT RightServo, 650             ' Right Servo Left Pulse Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+  RETURN
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUES TO MAKE YOUR BOE-BOT TURN RIGHT 90 *
+' * DEGREES.  USE THE SAME VALUE AS ABOVE FOR THE PING))) BRACKET SERVO.  *
+' *************************************************************************
+
+Turn_Right:                             ' Right Turn, About 45 Degrees
+  FOR pulseCount = 0 TO 7               ' Number Of Pulses To Turn
+    PULSOUT PingServo, 750              ' Ping Servo Forward Pulse Value
+    PULSOUT LeftServo, 850              ' Left Servo Right Pulse Value
+    PULSOUT RightServo, 850             ' Right Servo Right Pulse Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+  RETURN
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUES TO MAKE YOUR BOE-BOT MOVE BACKWARD *
+' * WHILE THE PING))) IS FACING FORWARD.                                  *
+' *************************************************************************
+
+Back_Up:                                ' Back Up
+  FOR pulseCount = 0 TO 40              ' Number Of Pulses To Backup
+    PULSOUT PingServo, 750              ' Ping Servo Forward Pulse Value
+    PULSOUT LeftServo, 650              ' Left Servo Backup Pulse Value
+    PULSOUT RightServo, 850             ' Right Servo Backup Pulse Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+  RETURN
+
+Ping_Out:                               ' PING)))
+  counter = 0                           ' Reset Passive Delay Counter
+  LOW Ping                              ' Force PING))) Line Low
+  PULSOUT Ping, 5                       ' Activate PING))) Pulse
+  PULSIN  Ping, 1, distance             ' Receive Return Pulse
+  distance = distance ** 2257           ' Calculate Distance
+  RETURN
+
+Ping_Around:                            ' Start 180 Degree Pan-Scan
+  counter = 0                           ' Reset Passive Delay Counter
+  oldDistance = 30                      ' Current Old Distance Values
+  task = 0                              ' Current Task Priority
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUE TO MAKE YOUR PING)))                *
+' * TURN 90 DEGREES LEFT.                                                 *
+' *************************************************************************
+
+  FOR pulseCount = 0 TO 20              ' Number Of Pulses To Spin
+    LOW Ping                            ' Force PING))) Line Low
+    PULSOUT PingServo, 1085             ' Ping Servo 90 Left Pulse Value
+    PULSOUT Ping, 5                     ' Activate PING)))
+    PULSIN  Ping, 1, distance           ' Receive Distance Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+
+  distance = distance ** 2257           ' Calculate Distance In cm
+  IF distance > oldDistance THEN        ' Is distance > Last Clear Path
+    oldDistance = distance              ' Update oldDistance Value
+    task = 1
+  ENDIF
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUE TO MAKE YOUR PING)))                *
+' * TURN 45 DEGREES LEFT.                                                 *
+' *************************************************************************
+
+  FOR pulseCount = 0 TO 20              ' Number Of Pulses To Spin
+    LOW Ping                            ' Force PING))) Line Low
+    PULSOUT PingServo, 850              ' Ping Servo 45 Left Pulse Value
+    PULSOUT Ping, 5                     ' Activate PING)))
+    PULSIN  Ping, 1, distance           ' Receive Distance Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+
+  distance = distance ** 2257           ' Calculate Distance In cm
+  IF distance > oldDistance THEN        ' Is distance > Last Clear Path
+    oldDistance = distance              ' Update oldDistance Value
+    task = 2
+  ENDIF
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUE TO MAKE YOUR PING)))                *
+' * TURN 45 DEGREES RIGHT.                                                *
+' *************************************************************************
+
+  FOR pulseCount = 0 TO 20              ' Number Of Pulses To Spin
+    LOW Ping                            ' Force PING))) Line Low
+    PULSOUT PingServo, 400              ' Ping Servo 45 Right Pulse Value
+    PULSOUT Ping, 5                     ' Activate PING)))
+    PULSIN  Ping, 1, distance           ' Receive Distance Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+
+  distance = distance ** 2257           ' Calculate Distance In cm
+  IF distance > oldDistance THEN        ' Is distance > Last Clear Path
+    oldDistance = distance              ' Update oldDistance Value
+    task = 3
+  ENDIF
+
+' *************************************************************************
+' * USE THE APPROPRIATE PULSOUT VALUE TO MAKE YOUR PING)))                *
+' * TURN 90 DEGREES RIGHT.                                                *
+' *************************************************************************
+
+  FOR pulseCount = 0 TO 20              ' Number Of Pulses To Spin
+    LOW Ping                            ' Force PING))) Line Low
+    PULSOUT PingServo, 225              ' Ping Servo 90 Right Pulse Value
+    PULSOUT Ping, 5                     ' Activate PING)))
+    PULSIN  Ping, 1, distance           ' Receive Distance Value
+    PAUSE 20                            ' Refresh Delay
+  NEXT
+
+  distance = distance ** 2257           ' Calculate Distance In cm
+  IF distance > oldDistance THEN        ' Is distance > Last Clear Path
+    oldDistance = distance              ' Update oldDistance Value
+    task = 4
+  ENDIF
+
+  ON task GOSUB Task0, Task1, Task2, Task3, Task4
+
+  distance = 50                         ' Prevent Scan From Looping
+
+  RETURN
+
+Task0:                                  ' Forward Was Clearest Path
+  GOSUB Turn_Right                      ' This Could Mean Narrow Path
+  GOSUB Turn_Right                      ' So We'll Turn Around
+  GOSUB Turn_Right                      ' You Can Change The Behavior
+  GOSUB Turn_Right                      ' Of Any Of The Tasks
+  RETURN
+
+Task1:                                  ' 90 Degrees Left Was Clearest
+  GOSUB Turn_Left
+  GOSUB Turn_Left
+  RETURN
+
+Task2:                                  ' 45 Degrees Left Was Clearest
+  GOSUB Turn_Left
+  RETURN
+
+Task3:                                  ' 45 Degrees Right Was Clearest
+  GOSUB Turn_Right
+  RETURN
+
+Task4:                                  ' 90 Degrees Right Was Clearest
+  GOSUB Turn_Right
+  GOSUB Turn_Right
+  RETURN

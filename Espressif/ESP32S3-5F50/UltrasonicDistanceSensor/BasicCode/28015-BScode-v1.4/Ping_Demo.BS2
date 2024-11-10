@@ -1,0 +1,118 @@
+' =========================================================================
+'
+'   File....... Ping_Demo.BS2
+'   Purpose.... Demo Code for Parallax Ping Sonar Sensor
+'   Author..... Jon Williams -- Parallax, Inc.
+'   E-mail..... jwilliams@parallax.com
+'   Started....
+'   Updated.... 08 JUN 2005
+'
+'   {$STAMP BS2}
+'   {$PBASIC 2.5}
+'
+' =========================================================================
+
+
+' -----[ Program Description ]---------------------------------------------
+'
+' This program demonstrates the use of the Parallax Ping Sonar sensor and
+' converting the raw measurement to English (inches) and Metric (cm) units.
+'
+' Sonar Math:
+'
+' At sea level sound travels through air at 1130 feet per second.  This
+' equates to 1 inch in 73.746 uS, or 1 cm in 29.034 uS).
+'
+' Since the Ping sensor measures the time required for the sound wave to
+' travel from the sensor and back.  The result -- after conversion to
+' microseconds for the BASIC Stamp module in use -- is divided by two to
+' remove the return portion of the echo pulse.  The final raw result is
+' the duration from the front of the sensor to the target in microseconds.
+
+
+' -----[ Revision History ]------------------------------------------------
+
+
+' -----[ I/O Definitions ]-------------------------------------------------
+
+Ping            PIN     15
+
+
+' -----[ Constants ]-------------------------------------------------------
+
+#SELECT $STAMP
+  #CASE BS2, BS2E
+    Trigger     CON     5                       ' trigger pulse = 10 uS
+    Scale       CON     $200                    ' raw x 2.00 = uS
+  #CASE BS2SX, BS2P, BS2PX
+    Trigger     CON     13
+    Scale       CON     $0CD                    ' raw x 0.80 = uS
+  #CASE BS2PE
+    Trigger     CON     5
+    Scale       CON     $1E1                    ' raw x 1.88 = uS
+#ENDSELECT
+
+RawToIn         CON     889                     ' 1 / 73.746 (with **)
+RawToCm         CON     2257                    ' 1 / 29.034 (with **)
+
+IsHigh          CON     1                       ' for PULSOUT
+IsLow           CON     0
+
+
+' -----[ Variables ]-------------------------------------------------------
+
+rawDist         VAR     Word                    ' raw measurement
+inches          VAR     Word
+cm              VAR     Word
+
+
+' -----[ EEPROM Data ]-----------------------------------------------------
+
+
+' -----[ Initialization ]--------------------------------------------------
+
+Reset:
+  DEBUG CLS,                                    ' setup report screen
+        "Parallax Ping Sonar  ", CR,
+        "=====================", CR,
+        CR,
+        "Time (uS).....       ", CR,
+        "Inches........       ", CR,
+        "Centimeters...       "
+
+
+' -----[ Program Code ]----------------------------------------------------
+
+Main:
+  DO
+    GOSUB Get_Sonar                             ' get sensor value
+    inches = rawDist ** RawToIn                 ' convert to inches
+    cm = rawDist ** RawToCm                     ' convert to centimeters
+
+    DEBUG CRSRXY, 15, 3,                        ' update report screen
+          DEC rawDist, CLREOL,
+          CRSRXY, 15, 4,
+          DEC inches, CLREOL,
+          CRSRXY, 15, 5,
+          DEC cm, CLREOL
+
+    PAUSE 100
+  LOOP
+  END
+
+
+' -----[ Subroutines ]-----------------------------------------------------
+
+' This subroutine triggers the Ping sonar sensor and measures
+' the echo pulse.  The raw value from the sensor is converted to
+' microseconds based on the Stamp module in use.  This value is
+' divided by two to remove the return trip -- the result value is
+' the distance from the sensor to the target in microseconds.
+
+Get_Sonar:
+  Ping = IsLow                                  ' make trigger 0-1-0
+  PULSOUT Ping, Trigger                         ' activate sensor
+  PULSIN  Ping, IsHigh, rawDist                 ' measure echo pulse
+  rawDist = rawDist */ Scale                    ' convert to uS
+  rawDist = rawDist / 2                         ' remove return trip
+  RETURN

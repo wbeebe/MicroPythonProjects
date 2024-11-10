@@ -1,0 +1,156 @@
+body {
+	margin: 10px;
+	background-color: #e6e6e6;
+	font-family: "Trebuchet MS", Verdana, sans-serif;
+	letter-spacing: 2px;
+}
+button {
+	font-size: 300%;
+	font-weight: bold;
+	display: inline-block;
+	margin: 10px;
+	padding: 25px;
+	width: 98%;
+	text-decoration: none;
+	color: #ffffff;
+	border: none;
+	border-radius: 10px;
+	outline: none;
+}
+.green_button {
+	background-color: #884EA0;
+}
+.red_button {
+	background-color: #D00000;
+}
+.orange_button {
+	background-color: #FC4C3C;
+}
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+.internals {
+	padding-left: 15px;
+	font-family: monospace;
+	font-size: 200%;
+}
+hr {
+    border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+h1 {
+    font-size: 300%;
+		color: #D35F8D;
+		text-align: center;
+}
+h2 {
+    font-size: 150%;
+		color: #5FA3D3;
+		padding-left: 15px;
+}
+h3 {
+		color: #D35F8D;
+		padding-top: 0px;
+		padding-bottom: 0px;
+}
+p, ul, li, td {
+	color: black;
+}
+a:link {
+	color: green;
+	text-decoration: underline;
+}
+a:visited {
+	color: gray;
+}
+a:hover {
+	color: red;
+	text-decoration: none;
+}
+a:active, a:focus {
+	color: red;
+}
+.sep {
+	margin: 15px 0;
+	height: 3px;
+	background-color: #5FA3D3;
+}
+.label {
+	color: #D35F8D;
+	font-weight: bold;
+}
+.timer-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#timer {
+    color: #808080;
+    font-size: 600%;
+}
+.label {
+    font-size: 3rem;
+    padding-left: 0.25rem;
+}
+.heartbeat-zone {
+		height : 550px;
+		padding: 4px;
+		background-color: #304050;
+		font: 12px monospace;
+		color: white;
+		overflow: scroll;
+		overflow-x: auto;
+		overflow-y: auto;
+		white-space: nowrap;
+}
+#error-line {
+	font: 12px monospace;
+	background-color: #C02020;
+	color: white;
+}
+#green-line {
+	font: 12px monospace;
+	background-color: #80FF80;
+	color: black;
+}
+#blue-line {
+	font: 12px monospace;
+	background-color: #BBDEFB;
+	color: black;
+}
+#orange-line {
+	font: 12px monospace;
+	background-color: #FFC04D;
+	color: black;
+}
+#crimson-line {
+	font: 12px monospace;
+	background-color: #FF1A6C;
+	color: white;
+}
+#regular-line {
+	font: 12px monospace;
+	background-color: #304050;
+	color: white;
+}
+table {
+	margin: 20px auto;
+	font-size: 32px;
+}
+table, td, th {
+	border-collapse: collapse;
+}
+td {
+	padding: 6px;
+}
+tr:nth-child(even) {
+	background: #e6e6e6;
+}
+tr:nth-child(odd) {
+	background: #ffffff;
+}

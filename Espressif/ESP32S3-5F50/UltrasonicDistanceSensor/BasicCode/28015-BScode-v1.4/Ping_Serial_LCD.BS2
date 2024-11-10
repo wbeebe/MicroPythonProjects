@@ -1,0 +1,153 @@
+' =========================================================================
+'
+'   File...... Serial_LCD_Template.BS2
+'   Purpose... Template for Parallax Serial LCD
+'   Author.... (c) Parallax, Inc. -- All Rights Reserved
+'   E-mail.... support@parallax.com
+'   Started...
+'   Updated... 11 FEB 2005
+'
+'   {$STAMP BS2}
+'   {$PBASIC 2.5}
+'
+' =========================================================================
+
+
+' -----[ Program Description ]---------------------------------------------
+
+
+' -----[ Revision History ]------------------------------------------------
+
+
+' -----[ I/O Definitions ]-------------------------------------------------
+
+Ping            PIN     8               ' Ping))) IO pin
+LCD             PIN     15              ' serial output to LCD
+
+
+' -----[ Constants ]-------------------------------------------------------
+
+#SELECT $STAMP
+  #CASE BS2, BS2E
+    T2400       CON     396
+    T9600       CON     84
+    T19K2       CON     32
+    Trigger     CON     5               ' trigger pulse = 10 uS
+    Scale       CON     $200            ' raw x 2.00 = uS
+  #CASE BS2SX, BS2P
+    T2400       CON     1021
+    T9600       CON     240
+    T19K2       CON     110
+    Trigger     CON     13
+    Scale       CON     $0CD            ' raw x 0.80 = uS
+  #CASE BS2PE
+    T2400       CON     396
+    T9600       CON     84
+    T19K2       CON     32
+    Trigger     CON     5
+    Scale       CON     $1E1            ' raw x 1.88 = uS
+#ENDSELECT
+
+LcdBaud         CON     T19K2
+
+LcdBkSpc        CON     $08             ' move cursor left
+LcdRt           CON     $09             ' move cursor right
+LcdLF           CON     $0A             ' move cursor down 1 line
+LcdCls          CON     $0C             ' clear LCD (use PAUSE 5 after)
+LcdCR           CON     $0D             ' move pos 0 of next line
+LcdBLon         CON     $11             ' backlight on
+LcdBLoff        CON     $12             ' backlight off
+LcdOff          CON     $15             ' LCD off
+LcdOn1          CON     $16             ' LCD on; cursor off, blink off
+LcdOn2          CON     $17             ' LCD on; cursor off, blink on
+LcdOn3          CON     $18             ' LCD on; cursor on, blink off
+LcdOn4          CON     $19             ' LCD on; cursor on, blink on
+LcdLine1        CON     $80             ' move to line 1, column 0
+LcdLine2        CON     $94             ' move to line 2, column 0
+
+LcdCC0          CON     $F8             ' define custom char 0
+LcdCC1          CON     $F9             ' define custom char 1
+LcdCC2          CON     $FA             ' define custom char 2
+LcdCC3          CON     $FB             ' define custom char 3
+LcdCC4          CON     $FC             ' define custom char 4
+LcdCC5          CON     $FD             ' define custom char 5
+LcdCC6          CON     $FE             ' define custom char 6
+LcdCC7          CON     $FF             ' define custom char 7
+
+RawToIn         CON     889             ' 1 / 73.746 (with **)
+RawToCm         CON     2257            ' 1 / 29.034 (with **)
+
+IsHigh          CON     1               ' for PULSOUT
+IsLow           CON     0
+
+
+' -----[ Variables ]-------------------------------------------------------
+
+rawDist         VAR     Word            ' raw measurement
+inches          VAR     Word
+cm              VAR     Word
+
+spc             VAR     Nib             ' spaces (for right-justification)
+
+
+' -----[ EEPROM Data ]-----------------------------------------------------
+
+
+' -----[ Initialization ]--------------------------------------------------
+
+Reset:
+  HIGH LCD                              ' setup serial output pin
+  PAUSE 100                             ' allow LCD to initialize
+
+Customize:
+  SEROUT LCD, LcdBaud, [LcdCC7,
+                        $00, $02, $11, $09, $11, $02, $00, $00]
+
+Banner:
+  SEROUT LCD, LcdBaud, [LcdOn1, LcdCls]
+  PAUSE 10
+  SEROUT LCD, LcdBaud, [LcdLine1, "PING", 7,") Demo",
+                        LcdLine2, "www.parallax.com"]
+  PAUSE 1000
+  SEROUT LCD, LcdBaud, [LcdOn1, LcdCls]
+  PAUSE 10
+
+
+' -----[ Program Code ]----------------------------------------------------
+
+Main:
+  DO
+    GOSUB Get_Sonar                             ' get sensor value
+    inches = rawDist ** RawToIn                 ' convert to inches
+    cm = rawDist ** RawToCm                     ' convert to centimeters
+
+    IF (cm > 350) THEN
+      SEROUT LCD, LcdBaud, [LcdLine1, "     TARGET     ",
+                            LcdLine2, "  OUT OF RANGE  "]
+    ELSE
+      'SEROUT LCD, LcdBaud, [LcdLine1, "PING", 7,")    "]
+
+      LOOKDOWN inches, >=[100, 10, 0], spc
+      SEROUT LCD, LcdBaud, [LcdLine1, "PARALLAX  ",
+                            REP " "\spc, DEC inches,
+                            " in"]
+
+      LOOKDOWN cm, >=[100, 10, 0], spc
+      SEROUT LCD, LcdBaud, [LcdLine2, "PING", 7,")    ",
+                            REP " "\spc, DEC cm,
+                            " cm"]
+    ENDIF
+    PAUSE 500
+  LOOP
+  END
+
+
+' -----[ Subroutines ]-----------------------------------------------------
+
+Get_Sonar:
+  Ping = IsLow                          ' make trigger 0-1-0
+  PULSOUT Ping, Trigger                 ' activate sensor
+  PULSIN  Ping, IsHigh, rawDist         ' measure echo pulse
+  rawDist = rawDist */ Scale            ' convert to uS
+  rawDist = rawDist / 2                 ' remove return trip
+  RETURN

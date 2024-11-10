@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TeamTrack CSV Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="ttrk.css" />
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+[class*="col-"] {
+  float: left;
+  padding: 5px;
+}
+
+html {
+  font-family: "Lucida Sans", sans-serif;
+}
+
+.menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  padding: 8px;
+  margin-bottom: 7px;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.red_menu {
+    background-color: #D00000;
+}
+.yellow_menu {
+    background-color: #D08E00;
+}
+.green_menu {
+    background-color: #008D00;
+}
+.blue_menu {
+    background-color: #00008D;
+}
+.aside {
+  background-color: #33b5e5;
+  padding: 15px;
+  color: #ffffff;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+/* For mobile phones: */
+[class*="col-"] {
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  /* For tablets: */
+  .col-s-1 {width: 8.33%;}
+  .col-s-2 {width: 16.66%;}
+  .col-s-3 {width: 25%;}
+  .col-s-4 {width: 33.33%;}
+  .col-s-5 {width: 41.66%;}
+  .col-s-6 {width: 50%;}
+  .col-s-7 {width: 58.33%;}
+  .col-s-8 {width: 66.66%;}
+  .col-s-9 {width: 75%;}
+  .col-s-10 {width: 83.33%;}
+  .col-s-11 {width: 91.66%;}
+  .col-s-12 {width: 100%;}
+}
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  .col-1 {width: 8.33%;}
+  .col-2 {width: 16.66%;}
+  .col-3 {width: 25%;}
+  .col-4 {width: 33.33%;}
+  .col-5 {width: 41.66%;}
+  .col-6 {width: 75%;}
+  .col-7 {width: 58.33%;}
+  .col-8 {width: 66.66%;}
+  .col-9 {width: 75%;}
+  .col-10 {width: 83.33%;}
+  .col-11 {width: 91.66%;}
+  .col-12 {width: 100%;}
+}
+a:link {
+    color: #ffffff;
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+}
+a:active {
+    text-decoration: none;
+}
+</style>
+<script language="javascript">
+    var websocket
+    var whoami = "TT-00000"
+
+    function get_selected_target_node() {
+      var nodes = document.getElementsByName('nodes');
+      var node_value = 'TT------';
+      if (nodes.length == 0) {
+        alert('There are no nodes in the node list.\nTouch "Node List" to populate the list\nthen try again.')
+        return
+      }
+      else {
+        // alert('Found nodes.')
+      }
+      nodes.forEach(node => {
+        if (node.checked) {
+          node_value = node.value;
+        }
+      })
+
+      return node_value;
+    }
+
+    function init() {
+        var scheme = 'ws:';
+        if (window.location.protocol == 'https:') {
+            scheme = 'wss:';
+        }
+
+        // Open the websocket and set up the essential callbacks to recieve data
+        // from the node via the websocket.
+        //
+        var wsUri           = scheme + '//' + window.location.hostname + '/wscsv';
+        writeLineToScreen("Connection to " + wsUri + "...");
+        websocket           = new WebSocket(wsUri);
+        websocket.onopen    = function(evt) { onOpen    (evt) };
+        websocket.onclose   = function(evt) { onClose   (evt) };
+        websocket.onmessage = function(evt) { onMessage (evt) };
+        websocket.onerror   = function(evt) { onError   (evt) };
+
+        var sendalarm = document.getElementById('alarm');
+        sendalarm.onclick = function() {
+          websocket.send('SendAlarm,' + whoami);
+          return false;
+        }
+
+        var clearalarm = document.getElementById('clear_alarm');
+        clearalarm.onclick = function() {
+          var node_to_send = get_selected_target_node()
+          websocket.send('ClearAlarm,' + whoami + ',' + node_to_send);
+          return false;
+        }
+
+        var res = document.getElementById('res');
+        res.onclick = function() {
+          websocket.send('ResetAll');
+          return false;
+        }
+
+        var lnodes = document.getElementById('lnodes');
+        lnodes.onclick = function() {
+          var elems = document.getElementsByClassName('radio-node');
+          while(elems.length > 0) {
+            elems[0].parentNode.removeChild(elems[0]);
+          }
+          websocket.send('Nodes')
+        }
+
+        var onodes = document.getElementById('onodes');
+        onodes.onclick = function() {
+          websocket.send('LIST_OOCOM')
+        }
+
+        var onodes = document.getElementById('cnodes');
+        onodes.onclick = function() {
+          websocket.send('ClearNodes')
+        }
+    }
+
+    // Write a string of data to the screen, checking the string's content
+    // to apply coloring to the string before it's displayed.
+    //
+    function writeLineToScreen(line) {
+        var segments = line.split(",");
+        line2 = line.replace(/(^Heartbeat,)/, "")
+        var elm = document.getElementById('heartbeat');
+
+        if (elm) {
+          var lineElm = document.createElement('span');
+          var time = new Date().toLocaleTimeString();
+          lineElm.innerText = "[" + time + "] " + line2 + '\n';
+
+          if (line.includes('ALARM') && !line.includes('NO ALARM')) {
+            lineElm.id = 'error-line';
+          }
+          else if (line.includes('OutOfComm')) {
+            lineElm.id = 'crimson-line';
+          }
+          else if (line.includes('Heartbeat')) {
+            if (line.includes(whoami)) {
+              lineElm.id = 'green-line';
+            }
+            else if (line.includes('_UTC')) {
+              lineElm.id = 'blue-line';
+            }
+          }
+          else {
+            lineElm.id = 'regular-line';
+          }
+
+          elm.appendChild(lineElm);
+          elm.scrollTop = elm.scrollHeight;
+        }
+    }
+
+    function onOpen(evt) {
+      writeLineToScreen("[CONNECTED]");
+    }
+
+    function onClose(evt) {
+      writeLineToScreen("[CONNECTION CLOSED]");
+    }
+    //
+    //
+    //
+    function setNodeList(segments) {
+      if (segments[0] == 'Nodes') {
+        var nl = document.getElementById('node-list');
+        var nodes = document.getElementsByName('nodes');
+        var checked = false;
+
+        for (i = 1; i < segments.length; i++) {
+          var foundNode = false;
+
+          if (nodes.length > 0) {
+            nodes.forEach( node => {
+              if (node.value == segments[i]) {
+                foundNode = true;
+              }
+            })
+          }
+
+          if (!foundNode) {
+            var radiobutton = document.createElement('input');
+            if (!checked) {
+              radiobutton.checked = 'checked';
+              checked = true;
+            }
+
+            var division = document.createElement('Div')
+            division.className = 'radio-node'
+            radiobutton.type = 'radio';
+            radiobutton.name = 'nodes';
+            radiobutton.id = segments[i];
+            radiobutton.value = segments[i];
+            var label = document.createElement('Label');
+            label.for = segments[i];
+            label.innerHTML = segments[i];
+            var br = document.createElement('br');
+            division.appendChild(radiobutton);
+            division.appendChild(label);
+            division.appendChild(br);
+            nl.appendChild(division);
+          }
+        }
+      }
+    }
+    //
+    //
+    //
+    function setDashboardName(segments) {
+      if (segments[0] == 'WhoAmI') {
+        var title = document.getElementById('title');
+        if (title) {
+          if (whoami != segments[1]) {
+            whoami = segments[1];
+            title.innerHTML = title.innerHTML + ": " + whoami;
+          }
+        }
+      }
+    }
+
+    //
+    // Inbound data hook. Inspect incoming CSV packets and work with them
+    // according to their message type. Parse JSON here and handle the
+    // exceptions, passing the JSON object on instead of the raw text data.
+    //
+    function onMessage(evt) {
+      segments = evt.data.split(',')
+      setDashboardName(segments)
+      setNodeList(segments)
+
+      writeLineToScreen(evt.data);
+    }
+
+    function onError(evt) {
+      writeLineToScreen("[CONNECTION ERROR]")
+    }
+
+    window.addEventListener("load", init, false);
+</script>
+
+</head>
+<body>
+<div class="row">
+  <div class="col-3 col-s-3 menu">
+    <h3 id='title'>CSV Dashboard</h3>
+    <ul>
+      <a id='res' href="#"><li class="red_menu">Reset All Nodes</li></a>
+    </ul>
+    <hr/>
+    <ul>
+        <a id='alarm' href="#"><li class="yellow_menu">Set ALARM</li></a>
+        <a id='clear_alarm' href="#"><li class="green_menu">Clear ALARM</li></a>
+    </ul>
+    <hr />
+    <ul id='node-list'>
+      <a id='lnodes' href="#"><li class="blue_menu">Node List</li></a>
+      <!--a id='onodes' href="#"><li class="blue_menu">List OOCOM Nodes</li></a-->
+      <!--a id='cnodes' href="#"><li class="blue_menu">Clear Nodes</li></a-->
+    </ul>
+  </div>
+
+  <div id = 'heartbeat' class="col-6 col-s-9 heartbeat-zone">
+  </div>
+
+</div>
+
+</body>
+</html>
