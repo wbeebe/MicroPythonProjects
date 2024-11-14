@@ -68,6 +68,11 @@ I call the final result _SSID_ because a number of the Espressif boards are
 programmed to act as stand-alone WiFi access points. Whether the SSID is used
 for that or not, it makes for a unique identifier for all the boards. 
 
+### WARNING
+
+There's a lot of duplicated code across all the devices. It all works, but
+there are some devices with more 'correct' code than others.
+
 ## Espressif Device Listing
 
 ### These folders under Espressif
