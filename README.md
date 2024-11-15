@@ -57,8 +57,8 @@ from the MicroPython website and it will boot and run properly.
 
 ### Naming Nomenclature
 
-All of my devices use a naming nomencature that is synthesized from the devices
-system name and the last four digits of the device's unique ID.
+All of my devices use a naming nomencature that is synthesized from the board's
+system name and the last four digits of the board's unique ID.
 ```python
 import binascii
 import os
