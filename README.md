@@ -61,6 +61,7 @@ All of my devices use a naming nomencature that is synthesized from the board's
 system name and the last four digits of the board's unique ID.
 ```python
 import binascii
+import machine as ma
 import os
 UNAME = os.uname().sysname.upper()
 UNIQUE_ID = binascii.hexlify(ma.unique_id()).decode('ascii').upper()
