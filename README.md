@@ -79,22 +79,22 @@ there are some devices with more 'correct' code than others.
 
 ### These folders under Espressif
 
-| Board                    | Version | ID           | Folder Name   | Special Feature | AD |
+| Board                    | Version | ID           | Folder Name   | Feature | AD |
 |--------------------------|---------|--------------|---------------|-----------------|--------|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi Access Point| Yes |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi AP| Yes |
 |ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 1088AS | |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi Access Point| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi AP| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi AP| |
 
 _The Version column is the MicroPython version in use._
 _The AD column means under active development at the moment._
@@ -103,7 +103,7 @@ _The AD column means under active development at the moment._
 
 ### These folders under RPi
 
-| Board                    | Version | ID       | Folder Name | Special Feature | AD |
+| Board                    | Version | ID       | Folder Name | Feature | AD |
 |--------------------------|---------|----------|-------------|-----------------|--------|
 | Raspberry Pi Pico        | 1.24.0  | RP2-3238 | RP2-3238    | | |
 | Raspberry Pi Pico W      | 1.24.0  | RP2-4535 | RP2-4535    | | |
