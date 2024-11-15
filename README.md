@@ -97,6 +97,7 @@ there are some devices with more 'correct' code than others.
 |ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi AP| |
 
 _The Version column is the MicroPython version in use._
+
 _The AD column means under active development at the moment._
 
 ## Raspberry Pi Pico / Pico 2 Device Listing
@@ -113,6 +114,7 @@ _The AD column means under active development at the moment._
 | Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93 | RP2-EC93    | Running RISC V Cores | Yes |
 
 _The Version column is the MicroPython version in use._
+
 _The AD column means under active development at the moment._
 
 
