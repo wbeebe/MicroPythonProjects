@@ -1,5 +1,7 @@
 # MicroPython Projects
 
+### A Personal History
+
 Since 2020 I have been using MicroPython on a number of embedded devices. My
 journey with MicroPython started with PyCom devices in 2020. The PyCom device
 I worked with was the FiPy. The was built around the Espressif 32-bit dual core
@@ -19,7 +21,7 @@ Unfortunately the money that initially provided impetus for this project wasn't
 renewed, and it eventually landed in my lap. If you're curious about the 
 software, it's in the folder TeamTrack2.
 
-#### What Followed Next
+### What Followed Next
 
 I wasn't particularly happy with Pycom's version of MicroPython. My biggest
 issue with Pycom's version was how it would randomly core dump, causing the device
@@ -53,7 +55,7 @@ boards in my possession.
 As of MicroPython 1.24.0, that is no longer an issue. You can download firmware
 from the MicroPython website and it will boot and run properly.
 
-#### Naming Nomenclature
+### Naming Nomenclature
 
 All of my devices use a naming nomencature that is synthesized from the devices
 system name and the last four digits of the device's unique ID.
@@ -77,37 +79,40 @@ there are some devices with more 'correct' code than others.
 
 ### These folders under Espressif
 
-| Device                   | Version | ID           | Folder Name   | Special Feature |
-|--------------------------|---------|--------------|---------------|-----------------|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 1088AS |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi Access Point|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi Access Point|
+| Board                    | Version | ID           | Folder Name   | Special Feature | Active |
+|--------------------------|---------|--------------|---------------|-----------------|--------|
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi Access Point| Yes |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 1088AS | |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi Access Point| |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi Access Point| |
+
+_The Active column means under active development at the moment._
 
 ## Raspberry Pi Pico / Pico 2 Device Listing
 
-
-
 ### These folders under RPi
 
-| Device                   | Version | ID       | Folder Name | Special Feature |
-|--------------------------|---------|----------|-------------|-----------------|
-| Raspberry Pi Pico        | 1.24.0  | RP2-3238 | RP2-3238    | |
-| Raspberry Pi Pico W      | 1.24.0  | RP2-4535 | RP2-4535    | |
-| Raspberry Pi Pico        | 1.24.0  | RP2-5936 | RP2-5936    | |
-| Raspberry Pi Pico        | 1.24.0  | RP2-8721 | RP2-8721    | |
-| Raspberry Pi Pico W      | 1.24.0  | RP2-9633 | RP2-9633    | |
-| Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93 | RP2-EC93    | Running RISC V Cores |
+| Board                    | Version | ID       | Folder Name | Special Feature | Active |
+|--------------------------|---------|----------|-------------|-----------------|--------|
+| Raspberry Pi Pico        | 1.24.0  | RP2-3238 | RP2-3238    | | |
+| Raspberry Pi Pico W      | 1.24.0  | RP2-4535 | RP2-4535    | | |
+| Raspberry Pi Pico        | 1.24.0  | RP2-5936 | RP2-5936    | | |
+| Raspberry Pi Pico        | 1.24.0  | RP2-8721 | RP2-8721    | | |
+| Raspberry Pi Pico W      | 1.24.0  | RP2-9633 | RP2-9633    | | |
+| Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93 | RP2-EC93    | Running RISC V Cores | Yes |
+
+_The Active column means under active development at the moment._
+
 
     Copyright 2024 William H. Beebe, Jr.
 
