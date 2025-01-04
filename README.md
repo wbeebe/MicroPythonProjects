@@ -110,11 +110,13 @@ _The AD column means under active development at the moment._
 | Raspberry Pi Pico        | 1.24.0  | RP2-3238 | RP2-3238    | | |
 | Raspberry Pi Pico W      | 1.24.0  | RP2-4535 | RP2-4535    | | |
 | Raspberry Pi Pico        | 1.24.0  | RP2-5936 | RP2-5936    | | |
+| Raspberry Pi Pico 2 W    | 1.25.0P | RP2-6F97 | RP2-6F97    | | |
 | Raspberry Pi Pico        | 1.24.0  | RP2-8721 | RP2-8721    | | |
 | Raspberry Pi Pico W      | 1.24.0  | RP2-9633 | RP2-9633    | | |
 | Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93 | RP2-EC93    | Running RISC V Cores | Yes |
 
-_The Version column is the MicroPython version in use._
+_The Version column is the MicroPython version in use. The letter P next to a version
+stands for Preview._
 
 _The AD column means under active development at the moment._
 
