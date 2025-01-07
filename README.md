@@ -58,7 +58,8 @@ from the MicroPython website and it will boot and run properly.
 ### Naming Nomenclature
 
 All of my devices use a naming nomencature that is synthesized from the board's
-system name and the last four digits of the board's unique ID.
+system name and the last four digits of the board's unique ID. The following code
+works for regular MicroPython.
 ```python
 import binascii
 import machine as ma
@@ -69,7 +70,20 @@ SSID = UNAME + '-' + UNIQUE_ID[-4:]
 ```
 I call the final result _SSID_ because a number of the Espressif boards are
 programmed to act as stand-alone WiFi access points. Whether the SSID is used
-for that or not, it makes for a unique identifier for all the boards. 
+for that or not, it makes for a unique identifier for all the boards.
+
+Because of the limited resources on the micro:bit devices, the following
+code is used to determine the naming nomenclature.
+```python
+import machine as ma
+import os
+UNAME = os.uname().sysname.upper()
+UNIQUE_ID = ''.join("{:02X}".format(b) for b in ma.unique_id())
+SSID = UNAME + "-" + UNIQUE_ID[-4:]
+```
+The primary limitation being that MicroPython for the micro:bit doesn't have
+the binascii library. Instead a list comprehension is used to properly format
+the binary machine.unique_id() into text.
 
 ### WARNING
 
@@ -80,22 +94,22 @@ there are some devices with more 'correct' code than others.
 
 ### These folders under Espressif
 
-| Board                    | Version | ID           | Folder Name   | Feature | AD |
-|--------------------------|---------|--------------|---------------|-----------------|--------|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi AP| Yes |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 | |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi AP| |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi AP| |
+| Board                    | Version | ID           | Folder Name   | Feature | AD  |
+|--------------------------|---------|--------------|---------------|---------|-----|
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi AP |     |
 
 _The Version column is the MicroPython version in use._
 
@@ -105,20 +119,24 @@ _The AD column means under active development at the moment._
 
 ### These folders under RPi
 
-| Board                    | Version | ID       | Folder Name | Feature | AD |
-|--------------------------|---------|----------|-------------|-----------------|--------|
-| Raspberry Pi Pico        | 1.24.0  | RP2-3238 | RP2-3238    | | |
-| Raspberry Pi Pico W      | 1.24.0  | RP2-4535 | RP2-4535    | | |
-| Raspberry Pi Pico        | 1.24.0  | RP2-5936 | RP2-5936    | | |
-| Raspberry Pi Pico 2 W    | 1.25.0P | RP2-6F97 | RP2-6F97    | | |
-| Raspberry Pi Pico        | 1.24.0  | RP2-8721 | RP2-8721    | | |
-| Raspberry Pi Pico W      | 1.24.0  | RP2-9633 | RP2-9633    | | |
-| Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93 | RP2-EC93    | Running RISC V Cores | Yes |
+| Board                    | Version | ID / Folder Name | Feature | AD |
+|--------------------------|---------|------------------|-----------------|--------|
+| Raspberry Pi Pico        | 1.24.0  | RP2-3238         | | |
+| Raspberry Pi Pico W      | 1.24.0  | RP2-4535         | | |
+| Raspberry Pi Pico        | 1.24.0  | RP2-5936         | | |
+| Raspberry Pi Pico 2 W    | 1.25.0P | RP2-6F97         | | |
+| Raspberry Pi Pico        | 1.24.0  | RP2-8721         | | |
+| Raspberry Pi Pico W      | 1.24.0  | RP2-9633         | | |
+| Raspberry Pi Pico 2      | 1.24.0  | RP2-EC93         | Running RISC V Cores | Yes |
 
 _The Version column is the MicroPython version in use. The letter P next to a version
 stands for Preview._
 
 _The AD column means under active development at the moment._
+
+## micro:bit Device Listing
+
+Please check the [micro:bit README](/micro:bit/README.md) for specific information.
 
 
     Copyright 2024 William H. Beebe, Jr.
