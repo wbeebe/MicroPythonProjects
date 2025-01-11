@@ -1,3 +1,18 @@
+"""
+Copyright 2025 William H. Beebe, Jr.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 import gc
 import os
 import platform
@@ -26,39 +41,44 @@ SSID = UNAME + '-' + UNIQUE_ID[-4:]
 print(f"     SSID: {SSID}")
 print(f" CPU FREQ: {ma.freq():,} Hz")
 #
-# Scan I2C bus for devices
-#
-SDA_PIN = ma.Pin(4) # Blue wire
-SCL_PIN = ma.Pin(5) # Yellow wire
-#I2C = ma.I2C(0, scl=SCL_PIN, sda=SDA_PIN, freq=250000)
-I2C = ma.SoftI2C(scl=SCL_PIN, sda=SDA_PIN, freq=250000)
-print(f"      I2C: {I2C}")
-i2c_scanned = I2C.scan()
-
-if len(i2c_scanned) == 0:
-    print("      I2C: No Devices Found")
-else:
-    print("      I2C: DEVICES FOUND:", [hex(device_address)
-        for device_address in i2c_scanned])
-
-    # Check if there is an SSD1306 display attached.
-    #
-    if SSD1306.OLED_ADDR in i2c_scanned:
-        print("      I2C: SSD1306 OLED")
-        #
-        # Create instance of SSD1306 class to control the
-        # display. Initialize it by clearing everything.
-        #
-        display = SSD1306.SSD1306_I2C(I2C)
-        display.fill(0)
-        display_tools.do_graphics(display, platform.platform(), SSID)
-
-#
 # Set up to use on-board LED
 #
+can_flash = True
 led = ma.Pin("LED", ma.Pin.OUT)
 led.value(0)
 
+def led_timer_callback(t):
+    if can_flash:
+        led.toggle()
+
+led_timer = ma.Timer()
+led_timer.init(freq=1, mode=ma.Timer.PERIODIC, callback=led_timer_callback)
+#
+# Set up I2C. Needed for SSD1306 OLED display control.
+#
+SDA_PIN = ma.Pin(4) # Blue wire
+SCL_PIN = ma.Pin(5) # Yellow wire
+I2C = ma.SoftI2C(scl=SCL_PIN, sda=SDA_PIN, freq=250000)
+#
+# Set up SSD1306 OLED display.
+#
+display = SSD1306.SSD1306_I2C(I2C)
+display.fill(0)
+display_tools.do_graphics(display, platform.platform(), SSID)
+
+def one_shot_callback(t):
+    display.fill(0)
+    display.show()
+
+one_shot = ma.Timer()
+#
+# Turn off OLED after 60 seconds to preserve display.
+#
+one_shot.init(period=120000, mode=ma.Timer.ONE_SHOT, callback=one_shot_callback)
+
+#
+# Set up WiFi and controlling web page.
+#
 import network
 import socket
 import settings
@@ -96,15 +116,16 @@ print(f"     WIFI: Ready {ip}")
 while True:
     client = connection.accept()[0]
     request = str(client.recv(2048))
-    #print(request)
     if 'LED+OFF=OFF' in request:
         led.value(0)
+        can_flash = False
     if 'LED+ON=ON' in request:
-        led.value(1)
+        can_flash = True
     if 'DISPLAY+ON=ON' in request:
         display_tools.do_graphics(display, platform.platform(), SSID)
         display.text(str(ip), 0, 36, 1)
         display.show()
+        one_shot.init(period=120000, mode=ma.Timer.ONE_SHOT, callback=one_shot_callback)
     if 'DISPLAY+OFF=OFF' in request:
         display.fill(0)
         display.show()
