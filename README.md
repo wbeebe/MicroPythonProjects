@@ -91,29 +91,7 @@ There's a lot of duplicated code across all the devices. It all works, but
 there are some devices with more 'correct' code than others.
 
 ## Espressif Device Listing
-
-### These folders under Espressif
-
-| Board                    | Version | ID           | Folder Name   | Feature | AD  |
-|--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-287C | ESP32S3-287C-2| WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-4EF0 | ESP32S3-4EF0-2| WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-5888 | ESP32S3-5888  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E138 | ESP32S3-E138  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.24.0  | ESP32S3-F838 | ESP32S3-F838  | WiFi AP |     |
-
-_The Version column is the MicroPython version in use._
-
-_The AD column means under active development at the moment._
+Please check the [Espressif README](/Espressif/README.md) for specific information.
 
 ## Raspberry Pi Pico / Pico 2 Device Listing
 
@@ -137,6 +115,8 @@ _The AD column means under active development at the moment._
 ## micro:bit Device Listing
 
 Please check the [micro:bit README](/micro:bit/README.md) for specific information.
+
+
 
 
     Copyright 2024 William H. Beebe, Jr.

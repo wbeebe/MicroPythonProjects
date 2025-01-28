@@ -39,15 +39,30 @@ neopixel_colors = [
 pinnum = const(38)
 np = neo.NeoPixel(ma.Pin(pinnum), 1)
 
+_last_led_color = LED_OFF
+
 def cycle_colors():
+    global _last_led_color
     for color in neopixel_colors:
         np[0] = color
         np.write()
         ti.sleep_ms(400)
+        
+    _last_led_color = LED_OFF
 
 def set_led_color(color):
     np[0] = color
     np.write()
+
+def toggle_led_color(new_color):
+    global _last_led_color
+
+    if new_color is _last_led_color:
+        set_led_color(LED_OFF)
+        _last_led_color = LED_OFF
+    else:
+        set_led_color(new_color)
+        _last_led_color = new_color
 
 # I2C pins for ESP32-S3-DevKit1
 SDA_PIN = const(1)

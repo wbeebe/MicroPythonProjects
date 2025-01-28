@@ -26,7 +26,6 @@ import ntptime
 from network import WLAN
 from machine import Pin, SoftI2C
 
-import ssd1306
 import devices
 import settings
 
@@ -128,7 +127,6 @@ def webpage(SSID):
     <button class='button-red'   name="RED"   value="ON">Red</button>
     <button class='button-green' name="GREEN" value="ON">Green</button>
     <button class='button-blue'  name="BLUE"  value="ON">Blue</button>
-    <button class='button-off'   name="OFF"   value="OFF">Off</button>
     <button class='button-gray'  name="CYCLE" value="ON">Cycle</button>
     </form>
     <hr />
@@ -151,9 +149,6 @@ class WebServer:
         self.name = os.uname().machine.split(' ')[-1]
         self.SSID = self.name + '-' + binascii.hexlify(machine.unique_id()).decode('ascii').upper()[-4:]
         print(" "+self.SSID)
-        #self.display = ssd1306.SSD1306_I2C(devices.OLED_WIDTH, devices.OLED_HEIGHT, self.i2c, devices.OLED_ADDR)
-        #self.display.fill(0)
-        #self.display.show()
         gc.enable()
 
     def run(self):
@@ -191,7 +186,7 @@ class WebServer:
 
         while True:
             client_connect, client_addr = connection.accept()
-            print(f" WIFI client {str(client_addr)}")
+            #print(f" WIFI client {str(client_addr)}")
             request = str(client_connect.recv(4096))
             #
             # If received has 0 bytes then the other end closed the connection.
@@ -203,19 +198,12 @@ class WebServer:
             # Parse the request, performing various actions.
             #
             if "RED=ON" in request:
-                #self.display.show_only_one_line('LED Red')
-                devices.set_led_color(devices.LED_RED)
+                devices.toggle_led_color(devices.LED_RED)
             elif "GREEN=ON" in request:
-                #self.display.show_only_one_line('LED Green')
-                devices.set_led_color(devices.LED_GREEN)
+                devices.toggle_led_color(devices.LED_GREEN)
             elif "BLUE=ON" in request:
-                #self.display.show_only_one_line('LED Blue')
-                devices.set_led_color(devices.LED_BLUE)
-            elif "OFF=OFF" in request:
-                #self.display.show_only_one_line('')
-                devices.set_led_color(devices.LED_OFF)
+                devices.toggle_led_color(devices.LED_BLUE)
             elif "CYCLE=ON" in request:
-                #self.display.show_only_one_line('')
                 devices.cycle_colors()
 
             client_connect.send(webpage(self.SSID))
