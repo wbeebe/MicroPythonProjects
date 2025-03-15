@@ -23,9 +23,11 @@ import esp
 import gc
 import network
 import ntptime
+import esp32
 from network import WLAN
 from machine import Pin, SoftI2C
 
+import config
 import devices
 import settings
 
@@ -59,20 +61,27 @@ def formatted_time():
     month_name = monthname[now[1]-1]
     year = now[0]
 
-    _24_to_12 = [ 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,  # AM
-                  12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ] # PM
+    hour = now[3]
 
-    if now[3] < 11:
+    if hour < 11:
         am_pm = 'AM'
+        if hour == 0:
+            hour = 12
     else:
         am_pm = 'PM'
+        if hour > 12:
+            hour -= 12
 
-    hour = _24_to_12[now[3]]
     minutes = now[4]
 
     return f"{hour}:{minutes:02} {am_pm} - {day_name} {month_day} {month_name} {year}"
 
 def webpage(SSID):
+    try:
+        vsf2 = esp32.Partition('vfs2')
+        vfs2_size = vsf2.info()[3]
+    except:
+        vfs2_size = 0;
     html = f"""
     <html><head><title>{SSID}</title>
     <style>
@@ -95,7 +104,7 @@ def webpage(SSID):
         text-decoration: none;
         color: #ffffff;
         border: none;
-        border-radius: 5px;
+        border-radius: 15px;
         outline: none;
         }}
     .button-red {{
@@ -131,9 +140,11 @@ def webpage(SSID):
     </form>
     <hr />
     <h2>{formatted_time()}</h2>
-    <h2>{' '.join(platform.platform().split('-')[0:3])}<br/>
-    Last built on {os.uname().version.split(' ')[-1]}</h2>
+    <h2>{config.version_name}<br/>
+    Last built with {config.compiler}<br />
+    Last built on {config.build_date}</h2>
     <h2>Flash size: {esp.flash_size():,} bytes<br/>
+    vfs2 size: {vfs2_size:,} bytes<br/>
     Memory free: {gc.mem_free():,} bytes</h2>
     </body>
     </html>

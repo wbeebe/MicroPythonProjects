@@ -1,22 +1,15 @@
 """
-Copyright 2024 William H. Beebe, Jr.
+   This code is licensed under Apache Version 2.0, January 2004
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+   Unless required by applicable law or agreed to in writing, this
+   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+   CONDITIONS OF ANY KIND, either express or implied.
 """
 import socket
 import _thread
 import time
 import esp
+import esp32
 import gc
 import network
 from network import WLAN
@@ -27,10 +20,20 @@ import devices
 import display_tools
 
 def webpage(SSID):
+    try:
+        vsf2 = esp32.Partition('vfs2')
+        vfs2_size = vsf2.info()[3]
+    except:
+        vfs2_size = 0;
     html = f"""
     <html><head><title>{SSID}</title>
     <style>
-    body {{font-family: sans-serif;margin: 20px;}}
+    html {{
+        font-family: sans-serif;
+        background-color: #FFFFFF;
+        display: inline-block;
+        margin: 0px auto;
+        }}
     button {{
         font-size: 500%;
         font-weight: normal;
@@ -38,7 +41,7 @@ def webpage(SSID):
         margin: 5px;
         padding: 20px 60px;
         width: 99%;
-        height: 140px;
+        height: 150px;
         justify-content: center;
         align-items: center;
         text-decoration: none;
@@ -51,10 +54,10 @@ def webpage(SSID):
         background-color: #DC143C;
         }}
     .button-green {{
-        background-color: #20A020;
+        background-color: #228B22;
         }}
     .button-blue {{
-        background-color: #4080E0;
+        background-color: #4169E1;
         }}
     .button-gray {{
         background-color: #808080;
@@ -75,7 +78,6 @@ def webpage(SSID):
     </head>
     <body>
     <h1>{SSID}</h1>
-    <hr />
     <form accept-charset="utf-8" method="POST">
     <button class='button-red'   name="RED"   value="ON">Red</button>
     <button class='button-green' name="GREEN" value="ON">Green</button>
@@ -88,6 +90,7 @@ def webpage(SSID):
     Last built with {config.compiler}<br />
     Last built on {config.build_date}</h2>
     <h2>Flash Size: {esp.flash_size():,} bytes<br />
+    vfs2 size: {vfs2_size:,} bytes<br/>
     Memory Free: {gc.mem_free():,} bytes</h2>
     </body>
     </html>
