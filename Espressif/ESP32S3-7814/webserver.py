@@ -1,10 +1,19 @@
 """
-   This code is licensed under Apache Version 2.0, January 2004
+    Copyright 2025 William H. Beebe, Jr.
 
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 """
+
 import socket
 import _thread
 import time
@@ -19,12 +28,19 @@ import config
 import devices
 import display_tools
 
-def webpage(SSID):
+def webpage(SSID, DISPLAY):
+    VFS2 = ""
     try:
         vsf2 = esp32.Partition('vfs2')
         vfs2_size = vsf2.info()[3]
+        VFS2 = f"vfs2 size: {vfs2_size:,} bytes<br/>"
     except:
-        vfs2_size = 0;
+        pass
+    
+    OLED_BUTTON="""<button class='button-oled'  name="OLED"  value="ON">Toggle OLED</button>"""
+    if DISPLAY is None:
+        OLED_BUTTON=""
+
     html = f"""
     <html><head><title>{SSID}</title>
     <style>
@@ -83,14 +99,14 @@ def webpage(SSID):
     <button class='button-green' name="GREEN" value="ON">Green</button>
     <button class='button-blue'  name="BLUE"  value="ON">Blue</button>
     <button class='button-gray'  name="CYCLE" value="ON">Cycle</button>
-    <button class='button-oled'  name="OLED"  value="ON">Toggle OLED</button>
+    {OLED_BUTTON}
     </form>
     <hr />
     <h2>{config.version_name}<br />
     Last built with {config.compiler}<br />
     Last built on {config.build_date}</h2>
     <h2>Flash Size: {esp.flash_size():,} bytes<br />
-    vfs2 size: {vfs2_size:,} bytes<br/>
+    {VFS2}
     Memory Free: {gc.mem_free():,} bytes</h2>
     </body>
     </html>
@@ -101,8 +117,9 @@ class WebServer:
     SSID = None
     do_action = None
 
-    def __init__(self, _SSID):
+    def __init__(self, _SSID, _DISPLAY):
         self.SSID = _SSID
+        self.DISPLAY = _DISPLAY
         gc.enable()
 
     def server_thread(self, clientsocket):
@@ -120,7 +137,7 @@ class WebServer:
             #print(received_str)
             #print()
             #
-            clientsocket.send(webpage(self.SSID))
+            clientsocket.send(webpage(self.SSID, self.DISPLAY))
             # Start parsing the request, performing the various actions.
             # If there is no defined actions for the request, tell the user.
             #

@@ -1,22 +1,24 @@
 """
-Copyright 2024 William H. Beebe, Jr.
+    Copyright 2025 William H. Beebe, Jr.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 """
+
 import socket
 import _thread
 import time
 import esp
+import esp32
 import gc
 import network
 from network import WLAN
@@ -26,11 +28,28 @@ import config
 import devices
 import display_tools
 
-def webpage(SSID):
+def webpage(SSID, DISPLAY):
+    VFS2 = ""
+    try:
+        vsf2 = esp32.Partition('vfs2')
+        vfs2_size = vsf2.info()[3]
+        VFS2 = f"vfs2 size: {vfs2_size:,} bytes<br/>"
+    except:
+        pass
+    
+    OLED_BUTTON="""<button class='button-oled'  name="OLED"  value="ON">Toggle OLED</button>"""
+    if DISPLAY is None:
+        OLED_BUTTON=""
+
     html = f"""
     <html><head><title>{SSID}</title>
     <style>
-    body {{font-family: sans-serif;margin: 20px;}}
+    html {{
+        font-family: sans-serif;
+        background-color: #FFFFFF;
+        display: inline-block;
+        margin: 0px auto;
+        }}
     button {{
         font-size: 500%;
         font-weight: normal;
@@ -38,7 +57,7 @@ def webpage(SSID):
         margin: 5px;
         padding: 20px 60px;
         width: 99%;
-        height: 140px;
+        height: 150px;
         justify-content: center;
         align-items: center;
         text-decoration: none;
@@ -51,10 +70,10 @@ def webpage(SSID):
         background-color: #DC143C;
         }}
     .button-green {{
-        background-color: #20A020;
+        background-color: #228B22;
         }}
     .button-blue {{
-        background-color: #4080E0;
+        background-color: #4169E1;
         }}
     .button-gray {{
         background-color: #808080;
@@ -75,19 +94,19 @@ def webpage(SSID):
     </head>
     <body>
     <h1>{SSID}</h1>
-    <hr />
     <form accept-charset="utf-8" method="POST">
     <button class='button-red'   name="RED"   value="ON">Red</button>
     <button class='button-green' name="GREEN" value="ON">Green</button>
     <button class='button-blue'  name="BLUE"  value="ON">Blue</button>
     <button class='button-gray'  name="CYCLE" value="ON">Cycle</button>
-    <button class='button-oled'  name="OLED"  value="ON">Toggle OLED</button>
+    {OLED_BUTTON}
     </form>
     <hr />
     <h2>{config.version_name}<br />
     Last built with {config.compiler}<br />
     Last built on {config.build_date}</h2>
     <h2>Flash Size: {esp.flash_size():,} bytes<br />
+    {VFS2}
     Memory Free: {gc.mem_free():,} bytes</h2>
     </body>
     </html>
@@ -98,8 +117,9 @@ class WebServer:
     SSID = None
     do_action = None
 
-    def __init__(self, _SSID):
+    def __init__(self, _SSID, _DISPLAY):
         self.SSID = _SSID
+        self.DISPLAY = _DISPLAY
         gc.enable()
 
     def server_thread(self, clientsocket):
@@ -117,7 +137,7 @@ class WebServer:
             #print(received_str)
             #print()
             #
-            clientsocket.send(webpage(self.SSID))
+            clientsocket.send(webpage(self.SSID, self.DISPLAY))
             # Start parsing the request, performing the various actions.
             # If there is no defined actions for the request, tell the user.
             #

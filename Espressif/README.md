@@ -46,9 +46,9 @@ there are some devices with more current code than others.
 |ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554  | WiFi AP |     |
 |ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5554 | ESP32S3-5554-2| WiFi AP |     |
 |ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50  | WiFi AP |     |
-|ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP |     |
+|ESP32-S3-DevKitC-1.1-N8R8 | 1.26.0P | ESP32S3-5F50 | ESP32S3-5F50-2| WiFi AP | Yes |
 |ESP32-S3-DevKitC-1.1-N32R8| 1.25.0P | ESP32S3-5888 | ESP32S3-5888  | WiFi    | Yes |
-|ESP32-S3-DevKitC-1.1-N32R8| 1.25.0P | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
 |ESP32-S3-DevKitC-1.1-N8R8 | 1.24.0  | ESP32S3-C534 | ESP32S3-C534  | MAX7219 |     |
 |ESP32-S3-DevKitC-1.1-N32R8| 1.25.0P | ESP32S3-E138 | ESP32S3-E138  | WiFi    | Yes |
 |ESP32-S3-DevKitC-1.1-N32R8| 1.25.0P | ESP32S3-E1D0 | ESP32S3-E1D0  | WiFi    | Yes |
@@ -80,7 +80,7 @@ MPY: soft reboot
 
 The IP address at the bottom of the output window is the IP address you use to connect to the device. I use a Pixel 4a for my testing with the default Google browser. What follows is a typical output. The buttons are programmed as toogles. For example touch the Red button and the RGB LED turns red. Touch it again, and the RGB LED turns off. You can touch the buttons in any order, but to turn the RGB LED off simply touch the last color button you touched a second time. The Cycle button cycles six colors on the RGB LED, and then turns off.
 
-![Example webpage](./Assets/ESP32-S3-5888-Screenshot_20250314.png)
+![Example webpage](./Assets/ESP32-S3-5F50_20250429.png)
 
 ## Example Acting as a WiFi Access Point
 
@@ -90,7 +90,7 @@ Once setup go to `192.168.1.2` in your handset's browser.
 
 The `Toggle OLED` button at the bottom assumes that an SSD1306 OLED (128 x 64) is attached to the I2C pins of the device. If you toggle the OLED on, there is a 60 second timer to turn off the OLED if you don't turn it off, to minimize burn-in.
 
-![Example webpage](./Assets/ESP32-S3-7814-Screenshot_20250314.png)
+![Example webpage](./Assets/ESP32-S3-7814_20250429.png)
 
 ## Expanded FLASH Use
 
@@ -106,17 +106,24 @@ where `$MP_PORT` is the port the device is attached to, for example, `/dev/ttyUS
 __Memory Utility: [mp-image-tool-esp32](https://github.com/glenn20/mp-image-tool-esp32)__
 
 ## Changes and Updates
+#### _29 April 2025_
+The MicroPython interpreter is being updated to 1.26.0 preview.
+
+Updated MicroPython software for ESP32S3-5F50 and ESP32S3-7814 to fully bring them in line with one another. Except for one file in 7814, both devices are running the same MicroPython software. Going forward this will be the baseline software in all ESP32 boards running MicroPython.
+
+Python's features are being used to make the HTML console page dynamic. The software adapts to the devices connected to each controller board. For example board 7814 has an OLED display connected via I2C, while board 5F50 does not. As a consequence the webserver page displays the `OLED Toggle` button if the OLED display is found or hides the `OLED Toggle` button if it isn't. There's now a test to not display anything about the `vfs2` file system if it's not found, and the `config.py` file now looks for the `preview` tag in the platform name and displays `preview` as part of the `version_name` if it's there.
+
 #### _15 March 2025_
 Updated some MicroPython software on two devices (ESP32S3-5888 and ESP32S3-7814) to bring them more in line with each other, especially how the webpage looks and operates.
 
 Furthermore, I'm using `mp-image-tool-esp32` to enable all the FLASH on N32R8 devices because MicroPython does not have the ability to compile a version to enable all the flash on its own.
 #### _28 JANUARY 2025_
-The development version of Micropython version 1.25 prerelease has now switched to using ESP-IDF version 5.4 to compile for Espressif devices. As a consequence, as I pull out my various boards I'm updating everything to Micropython version 1.25 prerelease that I build locally. I'll step up to the full release when it's made available. There are important reasons for stepping up to ESP-IDF 5.4, many having to do with how all the radios are managed.
+The development version of MicroPython version 1.25 prerelease has now switched to using ESP-IDF version 5.4 to compile for Espressif devices. As a consequence, as I pull out my various boards I'm updating everything to MicroPython version 1.25 prerelease that I build locally. I'll step up to the full release when it's made available. There are important reasons for stepping up to ESP-IDF 5.4, many having to do with how all the radios are managed.
 
 [Espressif IoT Development Framework](https://github.com/espressif/esp-idf)
 
 
-    Copyright 2024 William H. Beebe, Jr.
+    Copyright 2025 William H. Beebe, Jr.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
