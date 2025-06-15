@@ -19,7 +19,6 @@ from umqtt.robust import MQTTClient
 import time_tools as ttools
 
 MQTT_BROKER = "192.168.0.210"
-BOOST_TOPIC = b"boost-mqtt5/test"
 ESP32_TOPIC = b"esp32-mqtt5/test"
 mqttClient  = None
 SSID        = None
@@ -52,7 +51,7 @@ def publish(msg_type, payload):
             full_message += "}"
         else:
             full_message += f",{payload}" + "}"
-        mqttClient.publish(BOOST_TOPIC, full_message)
+        mqttClient.publish(ESP32_TOPIC, full_message)
         return True
     except Exception as mqtt_exception:
         print(mqtt_exception)
@@ -78,7 +77,7 @@ broker_connect() and publish() functions.
 broker_connect()
     - connects to the broker defined in MQTT_BROKER using the SSID
       as a unique identifier,
-    - subscribes to the topic defined in either BOOST_TOPIC or ESP32_TOPIC,
+    - subscribes to the topic defined in ESP32_TOPIC,
     - initializes the ping timer
 
 broker_connect() logging is very verbose.
@@ -98,8 +97,8 @@ def broker_connect(_SSID):
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect")
         mqttClient.connect()
-        print(f"      MQTT: Subscribe to topic {BOOST_TOPIC}")
-        mqttClient.subscribe(BOOST_TOPIC)
+        print(f"      MQTT: Subscribe to topic {ESP32_TOPIC}")
+        mqttClient.subscribe(ESP32_TOPIC)
         timer = Timer(3)
         timer.init(period=60000, mode=Timer.PERIODIC, callback=ping_timer_callback)
         print(f"      MQTT: Init ping timer: {timer}")

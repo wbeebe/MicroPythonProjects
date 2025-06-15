@@ -45,17 +45,51 @@ The view the web page presents is dynamic. Here's what that means:
       MQTT: Broker connection start from ESP32S3-7814 to 192.168.0.210
       MQTT: Set callback
       MQTT: Connect
-      MQTT: Subscribe to topic b'boost-mqtt5/test'
+      MQTT: Subscribe to topic b'esp32-mqtt5/test'
       MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=60000)
       MQTT: Broker connection successful to 192.168.0.210
 ```
-## Basic MQTT Architecture
+## Basic Development Setup
+The following items are needed:
 + A home WiFi access point
 + A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
 + Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
 + ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
 
-The application on the ESP32-S3 connects to the broker using topic `boost-mqtt5/test`. Messages are sent from the ESP32-S3 in minified JSON.
+Install Mosquitto via `apt`:
+```bash
+$ sudo apt install mosquitto mosquitto-clients -y
+```
+Once installed make sure that the Mosquitto broker is up and running:
+```bash
+$ systemctl status mosquitto
+● mosquitto.service - Mosquitto MQTT Broker
+     Loaded: loaded (/usr/lib/systemd/system/mosquitto.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2025-06-10 22:01:46 EDT; 4 days ago
+ Invocation: 809467da2f104de387c6a49227c287b8
+       Docs: man:mosquitto.conf(5)
+             man:mosquitto(8)
+   Main PID: 18660 (mosquitto)
+      Tasks: 1 (limit: 9354)
+        CPU: 1min 5.536s
+     CGroup: /system.slice/mosquitto.service
+             └─18660 /usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
+
+Jun 10 22:01:46 pi05-01 systemd[1]: Starting mosquitto.service - Mosquitto MQTT Broker...
+Jun 10 22:01:46 pi05-01 mosquitto[18660]: 1749607306: Loading config file /etc/mosquitto/conf.d/default.conf
+Jun 10 22:01:46 pi05-01 systemd[1]: Started mosquitto.service - Mosquitto MQTT Broker.
+Jun 14 00:50:10 pi05-01 systemd[1]: Reloading mosquitto.service - Mosquitto MQTT Broker...
+Jun 14 00:50:10 pi05-01 systemd[1]: Reloaded mosquitto.service - Mosquitto MQTT Broker.
+```
+In the example above Mosquitto is loaded and active (running). If it's not, then type `sudo systemctl start mosquitto` at the prompt and check the status again.
+
+Once the broker is up, open a terminal and type the following:
+```bash
+$ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32-mqtt5/test" -c &
+```
+Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-S3 MicroPython code module `mqtt_tools.py`.
+
+The application on the ESP32-S3 connects to the broker via the Mosquitto subscriber using topic `esp32-mqtt5/test`. Messages are sent from the ESP32-S3 in minified JSON and are echoed to the terminal.
 
 Example ESP32-S3 minified JSON messages:
 ```
