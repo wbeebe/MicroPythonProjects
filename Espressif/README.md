@@ -106,6 +106,8 @@ where `$MP_PORT` is the port the device is attached to, for example, `/dev/ttyUS
 __Memory Utility: [mp-image-tool-esp32](https://github.com/glenn20/mp-image-tool-esp32)__
 
 ## Changes and Updates
+#### _14 June 2025_
+Much work has been performed with ESP32S3-7814. That folder now has its own README explaining the changes. See the [ESP32S3-7814 README](ESP32S3-7814/README.md) for further details.
 #### _29 April 2025_
 The MicroPython interpreter is being updated to 1.26.0 preview.
 

@@ -2,13 +2,24 @@
 
 Rough notes. Unfinished, but what is currently here is accurate.
 
-![Example webpage](../Assets/ESP32-S3-7814-Screenshot_20250614.png)
+The ESP32-S3 developer board still executes MicroPython, in this case the latest pre-repease.
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
 |ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
+## Major Changes
+ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi AP. That external WiFi AP then allows it to connect to an MQTT broker.
 
-Typical startup output (captured via Thonny console).
+This is what a fully functioning ESP32-S3 developer board presents now via its built-in web page.
+
+![Example webpage](../Assets/ESP32-S3-7814-Screenshot_20250614.png)
+
+The view the web page presents is dynamic. Here's what that means:
+1. If the OLED display isn't present, then the `Toggle OLED` button is not shown.
+2. If the ESP32-S3 fails to connect with the MQTT broker then the `MQTT5 Test` button is not shown.
+3. If the ESP32-S3 developer board does not have 32 MiB of FLASH and if there is, as a consequence, no `vfs2` FLASH section, then the text at the bottom showing `vfs2 size` is not shown.
+
+## Typical startup output (captured via Thonny console).
 ```
       Boot: START
     Memory: 8,307,008 bytes
@@ -38,14 +49,15 @@ Typical startup output (captured via Thonny console).
       MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=60000)
       MQTT: Broker connection successful to 192.168.0.210
 ```
-## Architecture
-+ Raspberry Pi 5 with Ubuntu 25.04
-+ Eclipse Mosquitto MQTT Broker (https://mosquitto.org)
-+ ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust
+## Basic MQTT Architecture
++ A home WiFi access point
++ A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
++ Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
++ ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
 
 The application on the ESP32-S3 connects to the broker using topic `boost-mqtt5/test`. Messages are sent from the ESP32-S3 in minified JSON.
 
-Example messages:
+Example ESP32-S3 minified JSON messages:
 ```
  {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"RED","STATE":"ON"}
  {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"RED","STATE":"OFF"}
