@@ -1,5 +1,18 @@
-# This file is executed on every boot
-# (including wake-boot from deepsleep)
+"""
+    Copyright 2025 William H. Beebe, Jr.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+"""
 
 import gc
 import esp
@@ -10,9 +23,9 @@ import machine
 import ssd1306
 import display_tools
 
-print()
-print(f"    Memory: {gc.mem_free():,} MB")
-print(f"     Flash: {esp.flash_size():,} MB")
+print( "      Boot: START")
+print(f"    Memory: {gc.mem_free():,} bytes")
+print(f"     Flash: {esp.flash_size():,} bytes")
 PLATFORM = ' '.join(platform.platform().split('-'))
 print( "  Platform: " + PLATFORM)
 UNAME = os.uname().machine.split(' ')[-1]
@@ -50,7 +63,5 @@ else:
         #
         DISPLAY = ssd1306.SSD1306_I2C(ssd1306.OLED_WIDTH, ssd1306.OLED_HEIGHT, SOFT_I2C)
         DISPLAY.fill(0)
-        display_tools.do_graphics(DISPLAY, SSID)
-        display_tools.setup_display_blank_timer()
 
-print()
+print("      Boot: END")

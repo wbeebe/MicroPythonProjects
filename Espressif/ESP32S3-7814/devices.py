@@ -57,6 +57,7 @@ def set_led_color(color):
 
 def toggle_led_color(new_color):
     global _last_led_color
+    state = "OFF"
 
     if new_color is _last_led_color:
         set_led_color(LED_OFF)
@@ -64,6 +65,9 @@ def toggle_led_color(new_color):
     else:
         set_led_color(new_color)
         _last_led_color = new_color
+        state = "ON"
+
+    return state
 
 # I2C pins for ESP32-S3-DevKit1
 SDA_PIN = const(1)

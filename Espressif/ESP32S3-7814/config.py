@@ -14,7 +14,6 @@
     limitations under the License.
 """
 
-from micropython import const
 import platform
 import os
 

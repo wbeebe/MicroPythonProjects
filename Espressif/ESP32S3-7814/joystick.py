@@ -14,25 +14,13 @@
     limitations under the License.
 """
 
-import asyncio
+from machine import Pin
+import display_tools
 
-print("      Main: START")
+CENTER = Pin(39, Pin.IN, Pin.PULL_UP)
 
-import config
-import devices
-print("       LED: COLORS")
-devices.cycle_colors()
+def center_handler(pin):
+    display_tools.toggle_display_on_off()
 
-import seven_segment
-print(" 7 SEG LED: TESTS")
-seven_segment.test_segments()
-seven_segment.test_numbers()
-
-import joystick
-print("  JOYSTICK: ENABLE")
-joystick.enable_center_button();
-
-print("      Main: END")
-from webserver import WebServer
-web = WebServer(SSID, DISPLAY)
-web.run()
+def enable_center_button():
+    CENTER.irq(trigger=Pin.IRQ_RISING, handler=center_handler)

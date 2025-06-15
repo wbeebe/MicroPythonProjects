@@ -19,14 +19,17 @@ from machine import Timer
 
 _display = None
 _ssid = None
+_ip = None
 
-def do_graphics(display, SSID):
-    global _display, _ssid
+def do_graphics(display, SSID, ip):
+    global _display, _ssid, _ip
 
     if _display is None:
         _display = display
     if _ssid is None:
         _ssid = SSID
+    if _ip is None:
+        _ip = ip
     #
     # Create a graphic of the Raspberry Pi logo.
     # Display it twice, one logo for each RP2040 core,
@@ -58,6 +61,7 @@ def do_graphics(display, SSID):
     display.text('MicroPython', 40, 0, 1)
     display.text(platform.platform().split('-')[1], 40, 12, 1)
     display.text(SSID, 0, 36, 1)
+    display.text(str(ip), 0, 46, 1)
     display.show()
 
 _show_display = True
@@ -69,11 +73,11 @@ def timer_callback(t):
     _display.show()
 
 def setup_display_blank_timer():
-    timer = Timer(3)
+    timer = Timer(2)
     timer.init(period=60000, mode=Timer.ONE_SHOT, callback=timer_callback)
 
 def toggle_display_on_off():
-    global _display, _ssid, _show_display
+    global _display, _ssid, _ip, _show_display
     
     if _display is None:
         return
@@ -81,7 +85,7 @@ def toggle_display_on_off():
     _show_display = not _show_display
 
     if _show_display:
-        do_graphics(_display, _ssid)
+        do_graphics(_display, _ssid, _ip)
         setup_display_blank_timer()
     else:
         _display.fill(0)
