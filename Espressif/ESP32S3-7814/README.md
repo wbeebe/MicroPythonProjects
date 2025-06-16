@@ -1,16 +1,15 @@
 # ESP32S3-7814
-
-Rough notes. Unfinished, but what is currently here is accurate.
+## Major Changes
 
 The ESP32-S3 developer board still executes MicroPython, in this case the latest pre-repease.
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | WiFi AP | Yes |
-## Major Changes
-ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi AP. That external WiFi AP then allows it to connect to an MQTT broker.
+|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
 
-This is what a fully functioning ESP32-S3 developer board presents now via its built-in web page.
+ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi AP, such as a home WiFi access point. That external WiFi AP then allows it to connect to an MQTT broker.
+
+This is the web page a fully functioning ESP32-S3 developer board presents now.
 
 ![Example webpage](../Assets/ESP32-S3-7814-Screenshot_20250614.png)
 
@@ -19,7 +18,8 @@ The view the web page presents is dynamic. Here's what that means:
 2. If the ESP32-S3 fails to connect with the MQTT broker then the `MQTT5 Test` button is not shown.
 3. If the ESP32-S3 developer board does not have 32 MiB of FLASH and if there is, as a consequence, no `vfs2` FLASH section, then the text at the bottom showing `vfs2 size` is not shown.
 
-## Typical startup output (captured via Thonny console).
+## Startup Output
+This startup output is captured from Thonny's REPL window.
 ```
       Boot: START
     Memory: 8,307,008 bytes
@@ -49,13 +49,16 @@ The view the web page presents is dynamic. Here's what that means:
       MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=60000)
       MQTT: Broker connection successful to 192.168.0.210
 ```
-## Basic Development Setup
-The following items are needed:
-+ A home WiFi access point
-+ A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
-+ Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
-+ ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
-
+## Development Environment
+### Initial Setup
+The following items and actions are required:
+1. A home WiFi access point
+2. A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
+3. Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
+4. ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
+5. All the MicroPython files except `favicon.ico` and `README.md` must be copied to an ESP32-S3.
+6. You will need to create `settings.py` file that contains the lines `AP_SSID = "your-wifi-SSID"` and `AP_PASSWORD = "your-wifi-password"`, with the appropriate SSID and password for your local WiFi access point.
+### Application Installation and Execution
 Install Mosquitto via `apt`:
 ```bash
 $ sudo apt install mosquitto mosquitto-clients -y
