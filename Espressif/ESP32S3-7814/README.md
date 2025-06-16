@@ -1,7 +1,7 @@
 # ESP32S3-7814
 ## Major Changes
 
-The ESP32-S3 developer board still executes MicroPython, in this case the latest pre-repease.
+The ESP32-S3 developer board still executes MicroPython, in this case the latest pre-release.
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
