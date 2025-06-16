@@ -55,10 +55,15 @@ The following items and actions are required:
 1. A home WiFi access point
 2. A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
 3. Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
-4. ESP32-S3 with MicroPython 1.26 pre-release running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
+4. ESP32-S3 with at least the latest MicroPython release flashed to the device and running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
 5. All the MicroPython files except `favicon.ico` and `README.md` must be copied to an ESP32-S3.
 6. You will need to create `settings.py` file that contains the lines `AP_SSID = "your-wifi-SSID"` and `AP_PASSWORD = "your-wifi-password"`, with the appropriate SSID and password for your local WiFi access point.
-### Application Installation and Execution
+### Application Software/Firmware Installation and Execution
+#### MicroPython Firmware and Application
+Install the latest MicroPython release to the ESP32-S3 development board. It can be found at [ESP32_GENERIC_S3](https://micropython.org/download/ESP32_GENERIC_S3/). Make sure to select from the _**Firmware (Support for Octal-SPIRAM)**_ section at the bottom if you have a development board with 8 MiB of SPIRAM. Select the `.bin`, not the `.uf2` version of the firmware. The download page provides full installation instructions.
+
+Once the firmware is operational on the ESP32-S3 developer board, then upload all the Python files, and only the Python files, to the developer board.
+#### Mosquitto
 Install Mosquitto via `apt`:
 ```bash
 $ sudo apt install mosquitto mosquitto-clients -y
@@ -85,7 +90,7 @@ Jun 14 00:50:10 pi05-01 systemd[1]: Reloading mosquitto.service - Mosquitto MQTT
 Jun 14 00:50:10 pi05-01 systemd[1]: Reloaded mosquitto.service - Mosquitto MQTT Broker.
 ```
 In the example above Mosquitto is loaded and active (running). If it's not, then type `sudo systemctl start mosquitto` at the prompt and check the status again.
-
+#### Development and Testing
 Once the broker is up, open a terminal and type the following:
 ```bash
 $ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32-mqtt5/test" -c &
