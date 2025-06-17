@@ -5,7 +5,7 @@ The ESP32-S3 developer board still executes MicroPython, in this case the latest
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.25.0  | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
 
 ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi AP, such as a home WiFi access point. That external WiFi AP then allows it to connect to an MQTT broker.
 
@@ -16,7 +16,7 @@ This is the web page a fully functioning ESP32-S3 developer board presents now.
 The view the web page presents is dynamic. Here's what that means:
 1. If the OLED display isn't present, then the `Toggle OLED` button is not shown.
 2. If the ESP32-S3 fails to connect with the MQTT broker then the `MQTT5 Test` button is not shown.
-3. If the ESP32-S3 developer board does not have 32 MiB of FLASH and if there is, as a consequence, no `vfs2` FLASH section, then the text at the bottom showing `vfs2 size` is not shown.
+3. If the ESP32-S3 developer board does not a configured `vfs2` FLASH section, then the text at the bottom showing `vfs2 size` is not shown.
 
 ## Startup Output
 This startup output is captured from Thonny's REPL window.
@@ -24,7 +24,7 @@ This startup output is captured from Thonny's REPL window.
       Boot: START
     Memory: 8,307,008 bytes
      Flash: 33,554,432 bytes
-  Platform: MicroPython 1.26.0 preview xtensa IDFv5.4.1 with newlib4.3.0
+  Platform: MicroPython 1.25.0 xtensa IDFv5.2.2 with newlib4.3.0
  Unique ID: 68B6B33D7814
       SSID: ESP32S3-7814
  CPU Clock: 160,000,000 Hz
@@ -55,14 +55,20 @@ The following items and actions are required:
 1. A home WiFi access point
 2. A Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and connected to the home WiFi access point
 3. Eclipse Mosquitto MQTT Broker (https://mosquitto.org) installed and running on the Raspberry Pi
-4. ESP32-S3 with at least the latest MicroPython release flashed to the device and running umqtt.robust and connecting to the Mosquitto MQTT broker via the home WiFi access point
-5. All the MicroPython files except `favicon.ico` and `README.md` must be copied to an ESP32-S3.
-6. You will need to create `settings.py` file that contains the lines `AP_SSID = "your-wifi-SSID"` and `AP_PASSWORD = "your-wifi-password"`, with the appropriate SSID and password for your local WiFi access point.
+4. ESP32-S3 with at least the latest MicroPython release flashed to the device
+5. All the MicroPython files must be copied to an ESP32-S3.
 ### Application Software/Firmware Installation and Execution
 #### MicroPython Firmware and Application
 Install the latest MicroPython release to the ESP32-S3 development board. It can be found at [ESP32_GENERIC_S3](https://micropython.org/download/ESP32_GENERIC_S3/). Make sure to select from the _**Firmware (Support for Octal-SPIRAM)**_ section at the bottom if you have a development board with 8 MiB of SPIRAM. Select the `.bin`, not the `.uf2` version of the firmware. The download page provides full installation instructions.
 
 Once the firmware is operational on the ESP32-S3 developer board, then upload all the Python files, and only the Python files, to the developer board.
+
+You will need to create `settings.py` file that contains the two lines:
+1. `AP_SSID = "your-wifi-SSID"` and
+2. `AP_PASSWORD = "your-wifi-password"`,
+
+with the appropriate SSID and password for your local WiFi access point. These are used by the file `webserver.py`. Once created flash onto the ESP32-S3 developer board with the rest of the MicroPython files.
+
 #### Mosquitto
 Install Mosquitto via `apt`:
 ```bash
@@ -113,3 +119,8 @@ Example ESP32-S3 minified JSON messages:
 LED messages are generated from the web page buttons toggling the color LED. Tells the current color and if it's on or off.
 
 The PING message is sent every 60 seconds.
+
+## Changes and Updates
+#### _16 June 2025_
+
+A checkin to the MicroPython project has broken the build. I can't use that build and checkin on my ESP32-S3 developer board, so I've dropped back to the official 1.25.0 release. That is sufficient for my work, and what I'll stick with indefinately. This README has been updated to reflect this.
