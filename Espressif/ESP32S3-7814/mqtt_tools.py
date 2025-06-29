@@ -16,12 +16,12 @@
 import time
 from machine import Timer
 from umqtt.robust import MQTTClient
-import time_tools as ttools
 
-MQTT_BROKER = "192.168.0.210"
-ESP32_TOPIC = b"esp32-mqtt5/test"
-mqttClient  = None
-SSID        = None
+MQTT_BROKER    = "192.168.0.210"
+MQTT_TOPIC    = b"esp32-mqtt5/test"
+mqttClient     = None
+mqtt_msg_count = 0
+SSID           = None
 
 """
 publish() takes two arguments, the MQTT message type, and the data payload to send.
@@ -30,7 +30,7 @@ or time stamp, of the time publish() is called.
 
 publish() then adds the payload at the end and sends the MQTT message out as minified JSON.
 
-publish() has a special use case where it checks if the message type is "PING".
+publish() has a special use case where it checks if the message type is "PING" or "PWRON".
 If it is, then the payload is ignored and the minified JSON generated up to that point
 is closed off and sent to the broker.
 
@@ -41,17 +41,23 @@ publish will return True if it successfully published to the broker, else False 
 """
 def publish(msg_type, payload):
     global mqttClient
+    global mqtt_msg_count
 
     if mqttClient is None:
         return False
 
     try:
-        full_message = "{" + f"\"{msg_type}\":\"{SSID}\",\"DATE\":\"{ttools.formatted_time()}\""
-        if msg_type is "PING":
-            full_message += "}"
+        # time_stamp is in ISO 8601 format
+        #
+        now = time.localtime(time.time())
+        time_stamp = f"\"DATE\":\"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}T{now[3]:02d}:{now[4]:02d}:{now[5]:02d}.{now[6]:03d}Z\""
+
+        if msg_type == 'PING' or msg_type == 'PWRON':
+            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{time_stamp}" + "}"
         else:
-            full_message += f",{payload}" + "}"
-        mqttClient.publish(ESP32_TOPIC, full_message)
+            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{payload},{time_stamp}" + "}"
+        mqttClient.publish(MQTT_TOPIC, full_message)
+        mqtt_msg_count += 1
         return True
     except Exception as mqtt_exception:
         print(mqtt_exception)
@@ -77,7 +83,7 @@ broker_connect() and publish() functions.
 broker_connect()
     - connects to the broker defined in MQTT_BROKER using the SSID
       as a unique identifier,
-    - subscribes to the topic defined in ESP32_TOPIC,
+    - subscribes to the topic defined in MQTT_TOPIC,
     - initializes the ping timer
 
 broker_connect() logging is very verbose.
@@ -97,12 +103,13 @@ def broker_connect(_SSID):
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect")
         mqttClient.connect()
-        print(f"      MQTT: Subscribe to topic {ESP32_TOPIC}")
-        mqttClient.subscribe(ESP32_TOPIC)
+        print(f"      MQTT: Subscribe to topic {MQTT_TOPIC}")
+        mqttClient.subscribe(MQTT_TOPIC)
         timer = Timer(3)
         timer.init(period=60000, mode=Timer.PERIODIC, callback=ping_timer_callback)
         print(f"      MQTT: Init ping timer: {timer}")
         print(f"      MQTT: Broker connection successful to {MQTT_BROKER}")
+        publish("PWRON", "")
     except Exception as mqtt_exception:
         print(f"      MQTT: Broker connection failure to {MQTT_BROKER}")
         print(f"      MQTT: Exception: {mqtt_exception}")

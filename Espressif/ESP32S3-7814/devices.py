@@ -37,6 +37,9 @@ neopixel_colors = [
     LED_OFF
     ]
 
+# ESP32-S3-DevKitC-1 v1.0 NeoPixel pin
+#pinnum = const(48)
+# ESP32-S3-DevKitC-1 v1.1 NeoPixel pin
 pinnum = const(38)
 np = neo.NeoPixel(ma.Pin(pinnum), 1)
 

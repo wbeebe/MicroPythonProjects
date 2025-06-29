@@ -5,7 +5,7 @@ The ESP32-S3 developer board still executes MicroPython, in this case the latest
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.25.0  | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
 
 ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi access point, such as a home WiFi system. That external WiFi AP then allows it to connect to an MQTT broker.
 
@@ -22,9 +22,9 @@ The view the web page presents is dynamic. Here's what that means:
 This startup output is captured from Thonny's REPL window.
 ```
       Boot: START
-    Memory: 8,307,008 bytes
-     Flash: 8,388,608 bytes
-  Platform: MicroPython 1.25.0 xtensa IDFv5.2.2 with newlib4.3.0
+    Memory: 8,297,184 bytes
+     Flash: 33,554,432 bytes
+  Platform: MicroPython 1.26.0 preview xtensa IDFv5.4.1 with newlib4.3.0
  Unique ID: 68B6B33D7814
       SSID: ESP32S3-7814
  CPU Clock: 160,000,000 Hz
@@ -41,13 +41,14 @@ This startup output is captured from Thonny's REPL window.
       WIFI: 192.168.0.174
       WIFI: NTP Connection Attempt #1
       WIFI: NTP Connection Successful
-      DATE: 4:31 PM  Saturday 14 June 2025
+      DATE: 8:28 AM  Friday 27 June 2025
       MQTT: Broker connection start from ESP32S3-7814 to 192.168.0.210
       MQTT: Set callback
       MQTT: Connect
       MQTT: Subscribe to topic b'esp32-mqtt5/test'
       MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=60000)
       MQTT: Broker connection successful to 192.168.0.210
+
 ```
 If the board fails to connect to the MQTT broker, this is the last part of the output:
 ```
@@ -116,22 +117,38 @@ Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t
 
 The application on the ESP32-S3 connects to the broker via the Mosquitto subscriber using topic `esp32-mqtt5/test`. Messages are sent from the ESP32-S3 in minified JSON and are echoed to the terminal.
 
-Example ESP32-S3 minified JSON messages:
+All ESP32-S3 minified JSON messages:
 ```
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"RED","STATE":"ON"}
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"RED","STATE":"OFF"}
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"GREEN","STATE":"ON"}
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"GREEN","STATE":"OFF"}
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"BLUE","STATE":"ON"}
- {"LED":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COLOR":"BLUE","STATE":"OFF"}
- {"TEST":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025","COMPILER":"IDFv5.4.1","BUILD_DATE":"2025-06-07"}
- {"PING":"ESP32S3-7814","DATE":"9:12 PM  Saturday 14 June 2025"}
-```
-LED messages are generated from the web page buttons toggling the color LED. Tells the current color and if it's on or off.
+ {"PWRON":"ESP32S3-7814","DATE":2025-06-27T20:22:53.004Z"}
+ {"PING":"ESP32S3-7814","DATE":2025-06-27T20:23:53.004Z"}
+ {"LED":"ESP32S3-7814","COLOR":"RED","STATE":"ON","DATE":2025-06-27T20:24:01.004Z}"
+ {"LED":"ESP32S3-7814","COLOR":"RED","STATE":"OFF","DATE":2025-06-27T20:24:06.004Z"}
+ {"LED":"ESP32S3-7814","COLOR":"GREEN","STATE":"ON","DATE":2025-06-27T20:24:08.004Z"}
+ {"LED":"ESP32S3-7814","COLOR":"GREEN","STATE":"OFF","DATE":2025-06-27T20:24:10.004Z"}
+ {"LED":"ESP32S3-7814","COLOR":"BLUE","STATE":"ON","DATE":2025-06-27T20:24:12.004Z"}
+ {"LED":"ESP32S3-7814","COLOR":"BLUE","STATE":"OFF","DATE":2025-06-27T20:24:14.004Z"}
+ {"TEST":"ESP32S3-7814","VERSION":"MicroPython 1.26.0 preview","COMPILER":"IDFv5.4.1","BUILD_DATE":"2025-06-26","DATE":2025-06-27T20:24:17.004Z"}
 
-The PING message is sent every 60 seconds.
+```
+The `PWRON` message is sent every time the board successfully starts up and immediately after opening a connection to the MQTT broker.
+
+The `PING` message is sent every 60 seconds.
+
+The `LED` messages are generated from the web page buttons toggling the color LED. They tell which LED color is chosen and if the LED is on or off.
+
+The `TEST` message is sent via the `MQTT5 Test` web page button. It sends the MicroPython version, the version of the ESP-IDF toolset that was used to build that MicroPython version and the date it was last built.
+
+Every message contains the SSID that sent the message.
+
+Every message time stamp is in ISO 8601 format, UTC.
 
 ## Changes and Updates
+#### _26 June 2025_
+
+After re-reading a specific MicroPython check-in, I re-ran `idf.py fullclean`, then `idf.py set-target esp32s3 menuconfig` to set the maximum amount of flash to 32 GiB. The latest checkins fixed the bug with the ESP32-S3 boards with more than 8 GiB of FLASH; those boards will now report the correct amount of FLASH.
+
+After a successful MicroPython build I completely erased an ESP32-S3-DevKitC-1.1-N32R8 development board with `esptool.py --port /dev/ttyUSB0 erase_flash` (where the board is attached via USB to `/dev/ttyUSB0`) and then reprogrammed it with the latest MicroPython firmware built from the latest sources. I then uploaded all the Python code back onto the board. The code executed as expected. The problem was on my end. I'm now back to using the latest preview MicroPython.
+
 #### _16 June 2025_
 
 A checkin to the main MicroPython project has broken the build. I can't use that build on my ESP32-S3 developer board, so I've dropped back to the official 1.25.0 release. That is sufficient for my work, and what I'll stick with indefinately. This README has been updated to reflect this.

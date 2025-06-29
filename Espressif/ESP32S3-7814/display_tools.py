@@ -44,7 +44,7 @@ def do_graphics(display, SSID, ip):
     display.text('VER ', 40, 0, 1)
     display.text(platform.platform().split('-')[1], 72, 0, 1)
     if mqtt.mqttClient is not None:
-        display.text('MQTT', 40, 10, 1)
+        display.text(f"MQTT {mqtt.mqtt_msg_count}", 40, 10, 1)
     display.text(SSID, 0, 36, 1)
     display.text(str(ip), 0, 46, 1)
     now = time.localtime(time.time() + (-4 * 3600))
