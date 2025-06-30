@@ -75,6 +75,10 @@ def turn_off_all_segments():
     for segment in SEGMENTS:
         segment.off()
 
+def turn_on_all_segments():
+    for segment in SEGMENTS:
+        segment.on()
+
 def test_segments():
     turn_off_all_segments()
     for segment in SEGMENTS:

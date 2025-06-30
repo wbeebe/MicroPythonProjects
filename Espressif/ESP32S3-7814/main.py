@@ -14,22 +14,21 @@
     limitations under the License.
 """
 
-import asyncio
+import time
 
 print("      Main: START")
-
-import config
-import devices
 print("       LED: COLORS")
+import devices
 devices.cycle_colors()
 
-import seven_segment
 print(" 7 SEG LED: TESTS")
-seven_segment.test_segments()
-seven_segment.test_numbers()
+import seven_segment
+seven_segment.turn_on_all_segments()
+time.sleep(5)
+seven_segment.turn_off_all_segments()
 
-import joystick
 print("  JOYSTICK: ENABLE")
+import joystick
 joystick.enable_center_button();
 
 print("      Main: END")
