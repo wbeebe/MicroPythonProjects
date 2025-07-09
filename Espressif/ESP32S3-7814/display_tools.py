@@ -19,16 +19,16 @@ from machine import Timer
 import time
 import mqtt_tools as mqtt
 
-_display = None
-_ssid = None
-_ip = None
+display = None
+ssid = None
+ip = None
 
-def do_graphics(display, SSID, ip):
-    global _display, _ssid, _ip
+def do_graphics(_display, _ssid, _ip):
+    global display, ssid, ip
 
-    _display = display
-    _ssid = SSID
-    _ip = ip
+    display = _display
+    ssid = _ssid
+    ip = _ip
     #
     # Display the official MicroPython logo
     #
@@ -45,7 +45,7 @@ def do_graphics(display, SSID, ip):
     display.text(platform.platform().split('-')[1], 72, 0, 1)
     if mqtt.mqttClient is not None:
         display.text(f"MQTT {mqtt.mqtt_msg_count}", 40, 10, 1)
-    display.text(SSID, 0, 36, 1)
+    display.text(ssid, 0, 36, 1)
     display.text(str(ip), 0, 46, 1)
     now = time.localtime(time.time() + (-4 * 3600))
     year = now[0]
@@ -59,26 +59,26 @@ def do_graphics(display, SSID, ip):
 _show_display = True
 
 def timer_callback(t):
-    global _display, _show_display
+    global display, _show_display
     _show_display = False
-    _display.fill(0)
-    _display.show()
+    display.fill(0)
+    display.show()
 
 def setup_display_blank_timer():
     timer = Timer(2)
     timer.init(period=60000, mode=Timer.ONE_SHOT, callback=timer_callback)
 
 def toggle_display_on_off():
-    global _display, _ssid, _ip, _show_display
+    global display, ssid, ip, _show_display
     
-    if _display is None:
+    if display is None:
         return
 
     _show_display = not _show_display
 
     if _show_display:
-        do_graphics(_display, _ssid, _ip)
+        do_graphics(display, ssid, ip)
         setup_display_blank_timer()
     else:
-        _display.fill(0)
-        _display.show()
+        display.fill(0)
+        display.show()

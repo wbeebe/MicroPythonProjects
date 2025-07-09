@@ -23,9 +23,11 @@ devices.cycle_colors()
 
 print(" 7 SEG LED: TESTS")
 import seven_segment
-seven_segment.turn_on_all_segments()
-time.sleep(5)
-seven_segment.turn_off_all_segments()
+seven_segment.test_segments()
+seven_segment.test_numbers()
+#seven_segment.turn_on_all_segments()
+#time.sleep(5)
+#seven_segment.turn_off_all_segments()
 
 print("  JOYSTICK: ENABLE")
 import joystick

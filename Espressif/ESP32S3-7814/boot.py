@@ -22,6 +22,7 @@ import binascii
 import machine
 import ssd1306
 import display_tools
+import ht16k33_tools as htools
 
 print( "      Boot: START")
 print(f"    Memory: {gc.mem_free():,} bytes")
@@ -56,12 +57,16 @@ else:
     # Check if there is an SSD1306 display attached.
     #
     if ssd1306.OLED_ADDR in i2c_scanned:
-        print("       I2C: SSD1306 OLED Found")
         #
         # Create instance of SSD1306 class to control the
         # display. Initialize it by clearing everything.
         #
         DISPLAY = ssd1306.SSD1306_I2C(ssd1306.OLED_WIDTH, ssd1306.OLED_HEIGHT, SOFT_I2C)
         DISPLAY.fill(0)
+        print("       I2C: SSD1306 OLED Initialized")
+
+    if htools.LED1_ADDR in i2c_scanned and htools.LED2_ADDR in i2c_scanned:
+        htools.init(SOFT_I2C)
+        print("       I2C: HT16K33 LEDs Initialized")
 
 print("      Boot: END")

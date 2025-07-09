@@ -26,6 +26,7 @@ import devices
 import display_tools
 import mqtt_tools as mqtt
 import time_tools as ttools
+import ht16k33_tools as htools
 import webpage as web
 import settings
 
@@ -61,6 +62,7 @@ class WebServer:
                 attempts = 10
                 print(f"      WIFI: NTP Connection Successful")
                 print(f"      DATE: {ttools.formatted_time()}")
+                htools.start_clock();
             except Exception as ntp_time_exception:
                 print(ntp_time_exception)
                 time.sleep_ms(1000)
@@ -89,22 +91,21 @@ class WebServer:
                 if "RED=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_RED)
                     mqtt_message = f"\"COLOR\":\"RED\",\"STATE\":\"{state}\""
-                    mqtt.publish("LED", mqtt_message)
+                    mqtt.publish("NEOP", mqtt_message)
                 elif "GREEN=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_GREEN)
                     mqtt_message = f"\"COLOR\":\"GREEN\",\"STATE\":\"{state}\""
-                    mqtt.publish("LED", mqtt_message)
+                    mqtt.publish("NEOP", mqtt_message)
                 elif "BLUE=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_BLUE)
                     mqtt_message = f"\"COLOR\":\"BLUE\",\"STATE\":\"{state}\""
-                    mqtt.publish("LED", mqtt_message)
+                    mqtt.publish("NEOP", mqtt_message)
                 elif "CYCLE=ON" in received_str:
                     devices.cycle_colors()
                 elif "OLED=ON" in received_str:
                     display_tools.toggle_display_on_off()
-                elif "MQTT5=ON" in received_str:
-                    mqtt_message = f"\"COMPILER\":\"{config.compiler}\",\"BUILD_DATE\":\"{config.build_date}\""
-                    mqtt.publish("TEST", mqtt_message)
+                elif "MQTT=ON" in received_str:
+                    mqtt.report()
 
                 clientsocket.close()
 

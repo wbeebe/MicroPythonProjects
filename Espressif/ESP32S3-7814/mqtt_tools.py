@@ -13,12 +13,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 """
+import gc
 import time
 from machine import Timer
 from umqtt.robust import MQTTClient
 
+import config as cfg
+import display_tools as dtools
+import ht16k33_tools as htools
+
 MQTT_BROKER    = "192.168.0.210"
-MQTT_TOPIC    = b"esp32-mqtt5/test"
+MQTT_TOPIC     = b"esp32-mqtt5/test"
 mqttClient     = None
 mqtt_msg_count = 0
 SSID           = None
@@ -58,14 +63,35 @@ def publish(msg_type, payload):
             full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{payload},{time_stamp}" + "}"
         mqttClient.publish(MQTT_TOPIC, full_message)
         mqtt_msg_count += 1
+        gc.collect()
         return True
     except Exception as mqtt_exception:
         print(mqtt_exception)
+        gc.collect()
         return False
+
+def report():
+    if htools.i2c is None:
+        htools_txt = "\"ANLED\":\"None\""
+    else:
+        htools_txt = "\"ANLED\":\"Enabled\""
+        
+    if dtools.display is None:
+        dtools_txt = "\"OLED\":\"None\""
+    else:
+        dtools_txt = "\"OLED\":\"Enabled\""
+        
+    version_txt = f"\"VERSION\":\"{cfg.version_name}\""
+    compiler_txt = f"\"COMPILER\":\"{cfg.compiler}\""
+    build_txt = f"\"BUILD_DATE\":\"{cfg.build_date}\""
+
+    msg = f"{dtools_txt},{htools_txt},{version_txt},{compiler_txt},{build_txt}"
+    publish("REPORT", msg)
 
 def ping_timer_callback(timer_object):
     if publish("PING", "") == False:
-        print("Ping Send Fail: " + mqtt_message)
+        print("Ping Send Failed")
+    gc.collect()
 
 """
 mqtt_callback() is a dummy function at this point that does nothing.
@@ -74,6 +100,7 @@ and must be in place before a broker connection is attempted.
 """
 def mqtt_callback(topic, message):
     print((topic, message))
+    gc.collect()
 
 """
 broker_connect() is called with the device's SSID which is stored globally
@@ -102,11 +129,11 @@ def broker_connect(_SSID):
         print("      MQTT: Set callback")
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect")
-        mqttClient.connect()
+        mqttClient.connect(clean_session=True)
         print(f"      MQTT: Subscribe to topic {MQTT_TOPIC}")
         mqttClient.subscribe(MQTT_TOPIC)
         timer = Timer(3)
-        timer.init(period=60000, mode=Timer.PERIODIC, callback=ping_timer_callback)
+        timer.init(period=120000, mode=Timer.PERIODIC, callback=ping_timer_callback)
         print(f"      MQTT: Init ping timer: {timer}")
         print(f"      MQTT: Broker connection successful to {MQTT_BROKER}")
         publish("PWRON", "")

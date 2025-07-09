@@ -28,11 +28,11 @@ Some parts of the web page or dynamic:
     - if there is no MQTT broker then the 'MQTT5 Test' button isn't published.
 """
 def page(SSID, DISPLAY, MQTT):
-    VFS2 = ""
+    VFS2 = "</h2>"
     try:
         vsf2 = esp32.Partition('vfs2')
         vfs2_size = vsf2.info()[3]
-        VFS2 = f"vfs2 size: {vfs2_size:,} bytes<br/>"
+        VFS2 = f"<br />vfs2 size: {vfs2_size:,} bytes</h2>"
     except:
         pass
     
@@ -42,7 +42,7 @@ def page(SSID, DISPLAY, MQTT):
 
     MQTT_BUTTON=""
     if MQTT is not None:
-        MQTT_BUTTON="""<button class='button-off'   name="MQTT5" value="ON">MQTT5 Test</button>"""
+        MQTT_BUTTON="""<button class='button-off'   name="MQTT" value="ON">MQTT Report</button>"""
 
     html = f"""
     <html><head><title>{SSID}</title>
@@ -107,12 +107,10 @@ def page(SSID, DISPLAY, MQTT):
     </form>
     <hr />
     <h2>{ttools.formatted_time()}</h2>
-    <h2>{config.version_name}<br />
-    Last built with {config.compiler}<br />
-    Last built on {config.build_date}</h2>
-    <h2>Flash Size: {esp.flash_size():,} bytes<br />
+    <h2>{config.version_name} {config.compiler}</h2>
+    <h2>Memory Free: {gc.mem_free():,} bytes<br />
+    Flash Size: {esp.flash_size():,} bytes
     {VFS2}
-    Memory Free: {gc.mem_free():,} bytes</h2>
     </body>
     </html>
     """
