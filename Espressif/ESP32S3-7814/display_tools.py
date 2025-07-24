@@ -72,13 +72,16 @@ def toggle_display_on_off():
     global display, ssid, ip, _show_display
     
     if display is None:
+        print("   DISPLAY: NONE")
         return
 
     _show_display = not _show_display
 
     if _show_display:
+        print("   DISPLAY: ON")
         do_graphics(display, ssid, ip)
         setup_display_blank_timer()
     else:
+        print("   DISPLAY: OFF")
         display.fill(0)
         display.show()

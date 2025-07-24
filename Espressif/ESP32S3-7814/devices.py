@@ -55,7 +55,9 @@ def cycle_colors():
     _last_led_color = LED_OFF
 
 def set_led_color(color):
+    global _last_led_color
     np[0] = color
+    _last_led_color = color
     np.write()
 
 def toggle_led_color(new_color):
@@ -64,10 +66,8 @@ def toggle_led_color(new_color):
 
     if new_color is _last_led_color:
         set_led_color(LED_OFF)
-        _last_led_color = LED_OFF
     else:
         set_led_color(new_color)
-        _last_led_color = new_color
         state = "ON"
 
     return state

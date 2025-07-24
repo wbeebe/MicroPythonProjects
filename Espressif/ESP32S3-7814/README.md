@@ -44,9 +44,9 @@ This startup output is captured from Thonny's REPL window.
       WIFI: NTP Connection Successful
       DATE: 8:19 AM  Monday 7 July 2025
       MQTT: Broker connection start from ESP32S3-7814 to 192.168.0.210
-      MQTT: Set callback
       MQTT: Connect
-      MQTT: Subscribe to topic b'esp32-mqtt5/test'
+      MQTT: Set callback
+      MQTT: Subscribe to topic b'esp32/status'
       MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=120000)
       MQTT: Broker connection successful to 192.168.0.210
 ```
@@ -116,11 +116,11 @@ In the example above Mosquitto is loaded and active (running). If it is and you'
 #### Development and Testing
 Once the broker is up, open a terminal and type the following:
 ```bash
-$ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32-mqtt5/test" -c &
+$ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
 ```
 Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-S3 MicroPython code module `mqtt_tools.py`.
 
-The application on the ESP32-S3 connects to the broker via the Mosquitto subscriber using topic `esp32-mqtt5/test`. Messages are sent from the ESP32-S3 in minified JSON and are echoed to the terminal.
+The application on the ESP32-S3 connects to the broker via the Mosquitto subscriber using topic `esp32/status`. Messages are sent from the ESP32-S3 in minified JSON and are echoed to the terminal.
 
 All ESP32-S3 minified JSON messages:
 ```
@@ -136,11 +136,11 @@ All ESP32-S3 minified JSON messages:
 ```
 The `PWRON` message is sent every time the board successfully starts up and immediately after opening a connection to the MQTT broker.
 
-The `PING` message is sent every 120 seconds/two minutes.
+The `PING` message is sent every 120 seconds/two minutes, if no other message has been sent. If a message is sent within that two minute windows then the down counter associated with the ping function is reset. A ping message is therefore sent every two minutes _if no other message is sent within that window_,
 
-The `NEOP` messages are generated from the web page buttons toggling the color NeoPixel. They tell which color is chosen and if it's state is on or off.
+The `NEOP` (NeoPixel) messages are generated from the web page buttons toggling the color NeoPixel. They tell which color is chosen and if it's state is on or off.
 
-The `REPORT` message is sent via the `MQTT Report` web page button. It sends if the OLED (`OLED`) display was found and enabled (None if not), if the alphanumeric (`ANLED`) 14-segment LEDs were found and enabled (None if not), MicroPython version, the version of the ESP-IDF toolset that was used to build that MicroPython version and the date it was last built.
+The `REPORT` message is sent via the `MQTT Report` web page button. It sends if the OLED (`OLED`) display was found and enabled (None if not), if the alphanumeric (`ANLED`) 14-segment LEDs were found and enabled (None if not), MicroPython version, the version of the ESP-IDF toolset that was used to build that MicroPython version and the date MicroPython was last built.
 
 Every message contains the SSID that sent the message.
 

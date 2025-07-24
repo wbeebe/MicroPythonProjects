@@ -65,8 +65,13 @@ else:
         DISPLAY.fill(0)
         print("       I2C: SSD1306 OLED Initialized")
 
+    # Check if there are HT16K33 devices attached.
+    #
     if htools.LED1_ADDR in i2c_scanned and htools.LED2_ADDR in i2c_scanned:
-        htools.init(SOFT_I2C)
+        htools.init(SOFT_I2C, htools.LED1_ADDR, htools.LED2_ADDR)
+        print("       I2C: HT16K33 LEDs Initialized")
+    elif htools.LED3_ADDR in i2c_scanned and htools.LED4_ADDR in i2c_scanned:
+        htools.init(SOFT_I2C, htools.LED3_ADDR, htools.LED4_ADDR)
         print("       I2C: HT16K33 LEDs Initialized")
 
 print("      Boot: END")

@@ -20,6 +20,7 @@ import display_tools
 CENTER = Pin(39, Pin.IN, Pin.PULL_UP)
 
 def center_handler(pin):
+    print("  JOYSTICK: CENTER")
     display_tools.toggle_display_on_off()
 
 def enable_center_button():

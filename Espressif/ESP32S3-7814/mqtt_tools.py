@@ -21,9 +21,10 @@ from umqtt.robust import MQTTClient
 import config as cfg
 import display_tools as dtools
 import ht16k33_tools as htools
+import devices
 
 MQTT_BROKER    = "192.168.0.210"
-MQTT_TOPIC     = b"esp32-mqtt5/test"
+ESP32_TOPIC    = b"esp32/status"
 mqttClient     = None
 mqtt_msg_count = 0
 SSID           = None
@@ -44,9 +45,11 @@ will quietly exit.
 
 publish will return True if it successfully published to the broker, else False otherwise.
 """
+MAX_COUNT = const(120)
+down_count = MAX_COUNT
+
 def publish(msg_type, payload):
-    global mqttClient
-    global mqtt_msg_count
+    global mqttClient, mqtt_msg_count, down_count
 
     if mqttClient is None:
         return False
@@ -61,8 +64,9 @@ def publish(msg_type, payload):
             full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{time_stamp}" + "}"
         else:
             full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{payload},{time_stamp}" + "}"
-        mqttClient.publish(MQTT_TOPIC, full_message)
+        mqttClient.publish(ESP32_TOPIC, full_message)
         mqtt_msg_count += 1
+        down_count = MAX_COUNT
         gc.collect()
         return True
     except Exception as mqtt_exception:
@@ -89,17 +93,37 @@ def report():
     publish("REPORT", msg)
 
 def ping_timer_callback(timer_object):
-    if publish("PING", "") == False:
-        print("Ping Send Failed")
+    global mqttClient, down_count
+    down_count -= 1
+
+    if down_count > 0:
+        pass
+    else:
+        if publish("PING", "") == False:
+            print("Ping Send Failed")
+        down_count = MAX_COUNT
+
+    mqttClient.check_msg()
+
     gc.collect()
 
 """
-mqtt_callback() is a dummy function at this point that does nothing.
-It is here because it's required when the MQTT broker is initialized,
+mqtt_callback() is required when the MQTT broker is initialized,
 and must be in place before a broker connection is attempted.
 """
+import json
+
 def mqtt_callback(topic, message):
-    print((topic, message))
+    msg = json.loads(message)
+    #if 'PING' in msg and msg['PING'] != SSID:
+    #    print(msg['PING'])
+    if 'NEOP' in msg and msg['NEOP'] != SSID:
+        if msg['COLOR'] == "RED":
+            if msg['STATE'] == "ON":
+                devices.set_led_color(devices.LED_RED)
+            else:
+                devices.set_led_color(devices.LED_OFF)
+    msg.clear()
     gc.collect()
 
 """
@@ -110,7 +134,7 @@ broker_connect() and publish() functions.
 broker_connect()
     - connects to the broker defined in MQTT_BROKER using the SSID
       as a unique identifier,
-    - subscribes to the topic defined in MQTT_TOPIC,
+    - subscribes to the topic defined in ESP32_TOPIC,
     - initializes the ping timer
 
 broker_connect() logging is very verbose.
@@ -126,19 +150,18 @@ def broker_connect(_SSID):
     try:
         print(f"      MQTT: Broker connection start from {SSID} to {MQTT_BROKER}")
         mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=120)
-        print("      MQTT: Set callback")
+        print("      MQTT: Set receive topic callback")
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect")
         mqttClient.connect(clean_session=True)
-        print(f"      MQTT: Subscribe to topic {MQTT_TOPIC}")
-        mqttClient.subscribe(MQTT_TOPIC)
+        print(f"      MQTT: Subscribe to topic {ESP32_TOPIC.decode('utf8')}")
+        mqttClient.subscribe(ESP32_TOPIC)
         timer = Timer(3)
-        timer.init(period=120000, mode=Timer.PERIODIC, callback=ping_timer_callback)
+        timer.init(period=1000, mode=Timer.PERIODIC, callback=ping_timer_callback)
         print(f"      MQTT: Init ping timer: {timer}")
-        print(f"      MQTT: Broker connection successful to {MQTT_BROKER}")
+        print(f"      MQTT: Broker connection successfull to {MQTT_BROKER}")
         publish("PWRON", "")
     except Exception as mqtt_exception:
         print(f"      MQTT: Broker connection failure to {MQTT_BROKER}")
         print(f"      MQTT: Exception: {mqtt_exception}")
         mqttClient = None
-

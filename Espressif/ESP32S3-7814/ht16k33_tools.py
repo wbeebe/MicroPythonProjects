@@ -59,13 +59,13 @@ so I have left (commented below) code in for both.
     led2.set_character(atime[3], 0).set_character(' ', 1).set_character(am_pm, 2).set_character('M', 3).draw()
 """
 
-def init(_i2c):
+def init(_i2c, _led1, _led2):
     global i2c, led1, led2
     i2c = _i2c
-    led1 = HT16K33Segment14(i2c, board=HT16K33Segment14.ECBUYING_054)
+    led1 = HT16K33Segment14(i2c, i2c_address=_led1, board=HT16K33Segment14.ECBUYING_054)
     led1.set_brightness(2)
     led1.clear().draw()
-    led2 = HT16K33Segment14(i2c, i2c_address=0x71, board=HT16K33Segment14.ECBUYING_054)
+    led2 = HT16K33Segment14(i2c, i2c_address=_led2, board=HT16K33Segment14.ECBUYING_054)
     led2.set_brightness(2)
     led2.clear().draw()
 
@@ -73,5 +73,5 @@ def start_clock():
     if i2c is None:
         return
 
-    timer = Timer(1)
+    timer = Timer(2)
     timer.init(period=1000, mode=Timer.PERIODIC, callback=clock_display_callback)
