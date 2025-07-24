@@ -65,7 +65,7 @@ def timer_callback(t):
     display.show()
 
 def setup_display_blank_timer():
-    timer = Timer(2)
+    timer = Timer(1)
     timer.init(period=60000, mode=Timer.ONE_SHOT, callback=timer_callback)
 
 def toggle_display_on_off():
