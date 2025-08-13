@@ -114,6 +114,7 @@ and must be in place before a broker connection is attempted.
 import json
 
 def mqtt_callback(topic, message):
+    devices.blink_neopixel()
     msg = json.loads(message)
     #if 'PING' in msg and msg['PING'] != SSID:
     #    print(msg['PING'])

@@ -72,6 +72,20 @@ def toggle_led_color(new_color):
 
     return state
 
+def blink_neopixel():
+    global _last_led_color
+    np[0] = LED_OFF
+    np.write()
+    ti.sleep_ms(100)
+    np[0] = LED_RED
+    np.write()
+    ti.sleep_ms(100)
+    np[0] = LED_OFF
+    np.write()
+    ti.sleep_ms(100)
+    np[0] = _last_led_color
+    np.write()
+
 # I2C pins for ESP32-S3-DevKit1
 SDA_PIN = const(1)
 SCL_PIN = const(2)
