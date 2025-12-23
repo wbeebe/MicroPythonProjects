@@ -5,7 +5,7 @@ The ESP32-S3 developer board still executes MicroPython, in this case the latest
 
 | Board                    | Version | ID           | Folder Name   | Feature | AD  |
 |--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.26.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
+|ESP32-S3-DevKitC-1.1-N32R8| 1.27.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
 
 ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi access point, such as a home WiFi system. That external WiFi AP then allows it to connect to an MQTT broker.
 
@@ -80,18 +80,19 @@ You will need to create `settings.py` file that contains the following two lines
 with the appropriate SSID and password for your local WiFi access point. These are used by the file `webserver.py`. Once created flash onto the ESP32-S3 developer board with the rest of the MicroPython files.
 
 #### Mosquitto
-My operational personal computer is a Raspberry Pi 5 8 GiB with Ubuntu 25.04 installed and configured as a personal computer. With that environment:
+My computer runs Linux Mint 22.2. Within that environment:
 
 Install Mosquitto via `apt`:
 ```bash
-$ sudo apt install mosquitto mosquitto-clients -y
+sudo apt install mosquitto mosquitto-clients -y
 ```
 Once installed, add the following lines (at a minimum) to `/etc/mosquitto/conf.d/default.conf`:
 ```
 allow_anonymous true
 listener 1883 0.0.0.0
 ```
-Once installed make check if the Mosquitto broker is up and running:
+After adding that text to `default.conf` run `sudo systemctl stop mosquitto` then `sudo systemctl start mosquitto`,
+then check if the Mosquitto broker is up and running:
 ```bash
 $ systemctl status mosquitto
 ● mosquitto.service - Mosquitto MQTT Broker
@@ -112,11 +113,11 @@ Jun 10 22:01:46 pi05-01 systemd[1]: Started mosquitto.service - Mosquitto MQTT B
 Jun 14 00:50:10 pi05-01 systemd[1]: Reloading mosquitto.service - Mosquitto MQTT Broker...
 Jun 14 00:50:10 pi05-01 systemd[1]: Reloaded mosquitto.service - Mosquitto MQTT Broker.
 ```
-In the example above Mosquitto is loaded and active (running). If it is and you've edited the `default.conf` file, then type `sudo systemctl stop mosquitto` followed by `sudo systemctl start mosquitto` to read the configuration file. `systemctl` has a `restart` command, but I prefer a hard stop then a start to make sure everything is properly initialized.
+The second status line should show `Loading config file /etc/mosquitto/conf.d/default.conf`. If it doesn't then your MQTT client won't connect.
 #### Development and Testing
 Once the broker is up, open a terminal and type the following:
 ```bash
-$ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
+mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
 ```
 Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-S3 MicroPython code module `mqtt_tools.py`.
 

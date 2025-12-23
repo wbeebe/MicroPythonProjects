@@ -13,7 +13,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 """
-
 import socket
 import time
 import gc
@@ -22,11 +21,9 @@ import network
 from network import WLAN
 
 import config
-import devices
 import display_tools
 import mqtt_tools as mqtt
 import time_tools as ttools
-import ht16k33_tools as htools
 import webpage as web
 import settings
 
@@ -34,9 +31,10 @@ class WebServer:
     SSID = None
     do_action = None
 
-    def __init__(self, _SSID, _DISPLAY):
+    def __init__(self, _SSID, _DISPLAY, _DHT20):
         self.SSID = _SSID
         self.DISPLAY = _DISPLAY
+        self.DHT20 = _DHT20
         gc.enable()
 
     def run(self):
@@ -62,19 +60,18 @@ class WebServer:
                 attempts = 10
                 print(f"      WIFI: NTP Connection Successful")
                 print(f"      DATE: {ttools.formatted_time()}")
-                htools.start_clock();
             except Exception as ntp_time_exception:
                 print(f"      WIFI: NTP EXCEPTION {ntp_time_exception}")
                 time.sleep_ms(1000)
                 attempts += 1
 
-        mqtt.broker_connect(self.SSID)
+        mqtt.broker_connect(self.SSID, self.DHT20)
 
         address = (ip, 80)
         connection = socket.socket()
         connection.bind(address)
         connection.listen(4)
-
+        
         if self.DISPLAY is not None:
             display_tools.do_graphics(self.DISPLAY, self.SSID, ip)
             display_tools.setup_display_blank_timer()
@@ -84,24 +81,13 @@ class WebServer:
                 (clientsocket, address) = connection.accept()
                 received = clientsocket.recv(4096)
                 received_str = str(received)
-                clientsocket.send(web.page(self.SSID, self.DISPLAY, mqtt.mqttClient))
+                clientsocket.send(web.page(self.SSID, self.DISPLAY, mqtt.mqttClient, self.DHT20))
 
                 # Parse the request, performing the associated actions.
                 #
-                if "RED=ON" in received_str:
-                    state = devices.toggle_led_color(devices.LED_RED)
-                    mqtt_message = f"\"COLOR\":\"RED\",\"STATE\":\"{state}\""
-                    mqtt.publish("NEOP", mqtt_message)
-                elif "GREEN=ON" in received_str:
-                    state = devices.toggle_led_color(devices.LED_GREEN)
-                    mqtt_message = f"\"COLOR\":\"GREEN\",\"STATE\":\"{state}\""
-                    mqtt.publish("NEOP", mqtt_message)
-                elif "BLUE=ON" in received_str:
-                    state = devices.toggle_led_color(devices.LED_BLUE)
-                    mqtt_message = f"\"COLOR\":\"BLUE\",\"STATE\":\"{state}\""
-                    mqtt.publish("NEOP", mqtt_message)
-                elif "CYCLE=ON" in received_str:
-                    devices.cycle_colors()
+                state = "UNCONNECTED"
+                if "RTH=READ" in received_str:
+                    self.DHT20.read_temperature_humidity()
                 elif "OLED=ON" in received_str:
                     display_tools.toggle_display_on_off()
                 elif "MQTT=ON" in received_str:

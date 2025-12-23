@@ -20,14 +20,16 @@ from umqtt.robust import MQTTClient
 
 import config as cfg
 import display_tools as dtools
-import ht16k33_tools as htools
-import devices
+import dht20
 
 MQTT_BROKER    = "192.168.0.167"
 ESP32_TOPIC    = b"esp32/status"
 mqttClient     = None
 mqtt_msg_count = 0
 SSID           = None
+DHT20          = None
+temp_txt       = None
+humi_txt       = None
 
 """
 publish() takes two arguments, the MQTT message type, and the data payload to send.
@@ -49,10 +51,15 @@ MAX_COUNT = const(120)
 down_count = MAX_COUNT
 
 def publish(msg_type, payload):
-    global mqttClient, mqtt_msg_count, down_count
+    global mqttClient, mqtt_msg_count, down_count, DHT20, temp_txt, humi_txt
 
     if mqttClient is None:
         return False
+
+    if DHT20 is not None:
+        temperature, humidity = DHT20.read_temperature_humidity()
+        temp_txt = f"\"TEMP\":\"{temperature:.0f}C\""
+        humi_txt = f"\"HUMIDITY\":\"{humidity:.0f}%\""
 
     try:
         # time_stamp is in ISO 8601 format
@@ -61,9 +68,9 @@ def publish(msg_type, payload):
         time_stamp = f"\"DATE\":\"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}T{now[3]:02d}:{now[4]:02d}:{now[5]:02d}.{now[6]:03d}Z\""
 
         if msg_type == 'PING' or msg_type == 'PWRON':
-            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{time_stamp}" + "}"
+            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{temp_txt},{humi_txt},{time_stamp}" + "}"
         else:
-            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{payload},{time_stamp}" + "}"
+            full_message = "{" + f"\"{msg_type}\":\"{SSID}\",{temp_txt},{humi_txt},{payload},{time_stamp}" + "}"
         mqttClient.publish(ESP32_TOPIC, full_message)
         mqtt_msg_count += 1
         down_count = MAX_COUNT
@@ -75,21 +82,15 @@ def publish(msg_type, payload):
         return False
 
 def report():
-    if htools.i2c is None:
-        htools_txt = "\"ANLED\":\"None\""
-    else:
-        htools_txt = "\"ANLED\":\"Enabled\""
-        
-    if dtools.display is None:
-        dtools_txt = "\"OLED\":\"None\""
-    else:
+    dtools_txt = "\"OLED\":\"None\""
+    if dtools.display is not None:
         dtools_txt = "\"OLED\":\"Enabled\""
         
     version_txt = f"\"VERSION\":\"{cfg.version_name}\""
     compiler_txt = f"\"COMPILER\":\"{cfg.compiler}\""
     build_txt = f"\"BUILD_DATE\":\"{cfg.build_date}\""
 
-    msg = f"{dtools_txt},{htools_txt},{version_txt},{compiler_txt},{build_txt}"
+    msg = f"{dtools_txt},{version_txt},{compiler_txt},{build_txt}"
     publish("REPORT", msg)
 
 def ping_timer_callback(timer_object):
@@ -114,17 +115,7 @@ and must be in place before a broker connection is attempted.
 import json
 
 def mqtt_callback(topic, message):
-    devices.blink_neopixel()
-    msg = json.loads(message)
-    #if 'PING' in msg and msg['PING'] != SSID:
-    #    print(msg['PING'])
-    if 'NEOP' in msg and msg['NEOP'] != SSID:
-        if msg['COLOR'] == "RED":
-            if msg['STATE'] == "ON":
-                devices.set_led_color(devices.LED_RED)
-            else:
-                devices.set_led_color(devices.LED_OFF)
-    msg.clear()
+    print(topic, message)
     gc.collect()
 
 """
@@ -143,11 +134,14 @@ broker_connect() logging is very verbose.
 If broker_connect() fails to connect to the broker then mqttClient is set to None
 and any attempt pubish to the broker will silently fail.
 """
-def broker_connect(_SSID):
+def broker_connect(_SSID, _DHT20):
     global SSID
+    global DHT20
     global mqttClient
-
+    
     SSID = _SSID
+    DHT20 = _DHT20
+    
     try:
         print(f"      MQTT: Broker connection start from {SSID} to {MQTT_BROKER}")
         mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=120)
@@ -157,7 +151,7 @@ def broker_connect(_SSID):
         mqttClient.connect(clean_session=True)
         print(f"      MQTT: Subscribe to topic {ESP32_TOPIC.decode('utf8')}")
         mqttClient.subscribe(ESP32_TOPIC)
-        timer = Timer(3)
+        timer = Timer(1)
         timer.init(period=1000, mode=Timer.PERIODIC, callback=ping_timer_callback)
         print(f"      MQTT: Init ping timer: {timer}")
         print(f"      MQTT: Broker connection successfull to {MQTT_BROKER}")
