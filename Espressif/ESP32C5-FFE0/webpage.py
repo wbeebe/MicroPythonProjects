@@ -1,17 +1,17 @@
 """
-    Copyright 2025 William H. Beebe, Jr.
+Copyright 2025 William H. Beebe, Jr.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 import gc
 import esp
@@ -29,13 +29,6 @@ Some parts of the web page or dynamic:
     - if there is no MQTT broker then the 'MQTT5 Test' button isn't published.
 """
 def page(SSID, DISPLAY, MQTT, DHT20):
-    VFS2 = "</h2>"
-    try:
-        vsf2 = esp32.Partition('vfs2')
-        vfs2_size = vsf2.info()[3]
-        VFS2 = f"<br />vfs2 size: {vfs2_size:,} bytes</h2>"
-    except:
-        pass
     
     OLED_BUTTON=""
     if DISPLAY is not None:
@@ -58,11 +51,11 @@ def page(SSID, DISPLAY, MQTT, DHT20):
         display: inline-block;
         margin: 0px auto;
         }}
+
     .container {{
         display: flex;
         gap: 20px;
-        padding: 20px;
-        max-width: 800px;
+        padding: 10px;
         margin: 0 auto;
     }}
 
@@ -74,20 +67,19 @@ def page(SSID, DISPLAY, MQTT, DHT20):
     .text-box label {{
         position: absolute;
         top: -50px;
-        left: 10px;
-        background-color: white;
-        padding: 0 8px;
+        left: 0px;
+        border: 1px solid #fff;
+        padding: 0 30px;
+        color: #5FA3D3;
         font-weight: bold;
-        font-size: 200%;
-        z-index: 1;
+        font-size: 300%;
     }}
 
-    .text-box input {{
+    .text-box output {{
         width: 100%;
-        padding: 10px;
-        border: 1px solid #fff;
-        border-top-width: 0;
-        border-radius: 0 0 4px 4px;
+        border: 10px solid #fff;
+        padding: 0 20px;
+        color: #404040;
         font-size: 500%;
     }}
 
@@ -125,24 +117,25 @@ def page(SSID, DISPLAY, MQTT, DHT20):
     .button-oled {{
         background-color: #4040E0;
         }}
+
     hr {{
         border: 0;height: 2px;
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
         }}
     h1 {{font-size: 500%;color: #D35F8D;text-align: center;}}
-    h2 {{font-size: 200%;color: #5FA3D3;padding-left: 15px;}}
+    h2 {{font-size: 300%;color: #5FA3D3;padding-left: 15px;}}
     </style>
     </head>
     <body>
     <h1>{SSID}</h1>
     <div class="container">
         <div class="text-box">
-            <label for="name">Temperature</label>
-            <input type="text" id="temperature" placeholder="{temp_text}" readonly>
+            <label  for="temperature">Temperature</label>
+            <output for="temperature">{temp_text}</output>
         </div>
         <div class="text-box">
-            <label for="lastName">Humidity</label>
-            <input type="text" id="humidity" placeholder="{humi_text}" readonly>
+            <label  for="humidity">Humidity</label>
+            <output for="humidity">{humi_text}</output>
         </div>
     </div>
     <form accept-charset="utf-8" method="POST">
@@ -157,8 +150,7 @@ def page(SSID, DISPLAY, MQTT, DHT20):
     <h2>{ttools.formatted_time()}</h2>
     <h2>{config.version_name} {config.compiler}</h2>
     <h2>Memory Free: {gc.mem_free():,} bytes<br />
-    Flash Size: {esp.flash_size():,} bytes
-    {VFS2}
+    Flash Size: {esp.flash_size():,} bytes</h2>
     </body>
     </html>
     """
