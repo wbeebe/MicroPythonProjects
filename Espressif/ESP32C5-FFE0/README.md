@@ -1,14 +1,14 @@
 # ESP32C5-FFE8
 ## Main Features
-This application is primarily an example of reading a DHT20 I2C temperature and humidity sensor and displaying its output on a webpage, usually via a smartphone browser.
+This application is primarily an example of reading a DHT20 I2C temperature and humidity sensor and displaying its output on a webpage, usually via a smartphone browser. The board used is part of a DFRobots DFR1236 FireBeetle 2 ESP32-C5 Development Kit (https://www.dfrobot.com/product-2977.html) 
 
 * The ESP32-C5 is attached, via I2C, to an OLED display and a DHT20 temperature/humidity sensor.
 * The ESP32-C5 is an MQTT client and sends the DHT20 data out to a local MQTT server. This means the ESP32-C5 needs to connect to an external WiFi access point, such as a home WiFi system. That external WiFi AP then allows it to connect to an MQTT broker.
 * The ESP32-C5 developer board executes the latest release of MicroPython.
 
-| Board                    | MicroPython | ID/Folder Name    | Key Feature |
-|--------------------------|-------------|-------------------|-------------|
-|FireBeetle 2 ESP32-C5 V1.0| V 1.27.0    | ESP32C5-FFE8      | MQTT        |
+| Board                    | Part No. | MicroPython | ID/Folder Name | Key Feature |
+|--------------------------|----------|-------------|----------------|-------------|
+|FireBeetle 2 ESP32-C5 V1.0| DFR1236  | V 1.27.0    | ESP32C5-FFE8   | MQTT        |
 
 | Additional Parts                            | QTY | Vendor        | Product ID    |
 |---------------------------------------------|-----|---------------|---------------|
