@@ -1,5 +1,5 @@
 """
-Copyright 2025 William H. Beebe, Jr.
+Copyright 2025, 2026 William H. Beebe, Jr.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,11 +22,12 @@ import time_tools as ttools
 import dht20
 
 """
-page() is essentially a huge Python f string.
-Some parts of the web page or dynamic:
-    - if there is no partition named 'vfs2' then that information isn't published
+page() is a huge Python f string.
+
+Some parts of the web page are dynamic:
+    - if the DHT20 is working then non-zero values for temperature and humidity will be published
     - if there is no attached OLED display then the 'Toggled OLED' button isn't published
-    - if there is no MQTT broker then the 'MQTT5 Test' button isn't published.
+    - if there is no MQTT broker then the 'MQTT Report' button isn't published.
 """
 def page(SSID, DISPLAY, MQTT, DHT20):
     

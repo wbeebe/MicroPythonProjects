@@ -76,9 +76,9 @@ Install the latest MicroPython release to the ESP32-C5 development board. At the
 
 Once the firmware is operational on the ESP32-C5 developer board, then upload all the Python files, and only the Python files, to the developer board.
 
-I order to attach to your local WiFi access point, you will need to create a `settings.py` file that contains the following two lines:
+In order to attach to your local WiFi access point, you will need to create a `settings.py` file that contains the following two lines:
 1. `AP_SSID = "your-wifi-SSID"` and
-2. `AP_PASSWORD = "your-wifi-password"`,
+2. `AP_PASSWORD = "your-wifi-password"`
 
 with the appropriate SSID and password for your local WiFi access point. These are used by the file `webserver.py`. Once created flash `settings.py` onto the ESP32-C5 developer board with the rest of the MicroPython files.
 ### Setting Up Your MQTT Host Computer
@@ -117,7 +117,7 @@ Jun 14 00:50:10 pi05-01 systemd[1]: Reloading mosquitto.service - Mosquitto MQTT
 Jun 14 00:50:10 pi05-01 systemd[1]: Reloaded mosquitto.service - Mosquitto MQTT Broker.
 ```
 The second status line should show `Loading config file /etc/mosquitto/conf.d/default.conf`. If it doesn't then your MQTT client won't connect.
-#### Development and Testing
+#### Host Setup
 Once the broker is up, open a terminal and type the following:
 ```bash
 mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
@@ -125,7 +125,14 @@ mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
 Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-C5 MicroPython code module `mqtt_tools.py`.
 
 The application on the ESP32-C5 connects to the broker via the Mosquitto subscriber using topic `esp32/status`. Messages are sent from the ESP32-C5 in minified JSON and are echoed to the terminal.
-
+#### Development Board Setup
+The file `mqtt_tools.py` contains the following variables at the top of the source file:
+```python
+MQTT_BROKER    = "192.168.0.167"
+ESP32_TOPIC    = b"esp32/status"
+```
+The `MQTT_BROKER` variable is the IP address of the MQTT host. You need to change this to match your environment. The variable `ESP32_TOPIC` can be changed to suit if you remember to make sure to match it with the host topic, else communications between client and host will not work.
+#### Typical Outputs
 All ESP32-C5 minified JSON messages:
 ```
 {"PWRON":"ESP32C5-FFE0","TEMP":"23C","HUMIDITY":"50%","DATE":"2025-12-23T11:41:14.001Z"}
@@ -145,3 +152,21 @@ Every message starts with the SSID that sent the message.
 Every message ends with the time stamp in ISO 8601 UTC format.
 
 ## Changes and Updates
+#### _December 2025_
+General cleanup and preparation for further development.
+
+## License
+
+    Copyright 2025, 2026 William H. Beebe, Jr.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

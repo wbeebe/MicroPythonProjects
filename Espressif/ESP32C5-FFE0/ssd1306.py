@@ -1,3 +1,18 @@
+"""
+Copyright 2025, 2026 William H. Beebe, Jr.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 # MicroPython SSD1306 OLED driver, I2C interface
 #
 # Originally written by Adafruit
@@ -9,34 +24,35 @@
 
 import time
 import framebuf
+from micropython import const
 
 # register definitions
-SET_CONTRAST        = const(0x81)
-SET_ENTIRE_ON       = const(0xa4)
-SET_NORM_INV        = const(0xa6)
-SET_DISP            = const(0xae)
-SET_MEM_ADDR        = const(0x20)
-SET_COL_ADDR        = const(0x21)
-SET_PAGE_ADDR       = const(0x22)
-SET_DISP_START_LINE = const(0x40)
-SET_SEG_REMAP       = const(0xa0)
-SET_MUX_RATIO       = const(0xa8)
-SET_COM_OUT_DIR     = const(0xc0)
-SET_DISP_OFFSET     = const(0xd3)
-SET_COM_PIN_CFG     = const(0xda)
-SET_DISP_CLK_DIV    = const(0xd5)
-SET_PRECHARGE       = const(0xd9)
-SET_VCOM_DESEL      = const(0xdb)
-SET_CHARGE_PUMP     = const(0x8d)
+SET_CONTRAST:        byte = const(0x81)
+SET_ENTIRE_ON:       byte = const(0xa4)
+SET_NORM_INV:        byte = const(0xa6)
+SET_DISP:            byte = const(0xae)
+SET_MEM_ADDR:        byte = const(0x20)
+SET_COL_ADDR:        byte = const(0x21)
+SET_PAGE_ADDR:       byte = const(0x22)
+SET_DISP_START_LINE: byte = const(0x40)
+SET_SEG_REMAP:       byte = const(0xa0)
+SET_MUX_RATIO:       byte = const(0xa8)
+SET_COM_OUT_DIR:     byte = const(0xc0)
+SET_DISP_OFFSET:     byte = const(0xd3)
+SET_COM_PIN_CFG:     byte = const(0xda)
+SET_DISP_CLK_DIV:    byte = const(0xd5)
+SET_PRECHARGE:       byte = const(0xd9)
+SET_VCOM_DESEL:      byte = const(0xdb)
+SET_CHARGE_PUMP:     byte = const(0x8d)
 
 # display definitions
-OLED_WIDTH    = const(128)
-OLED_HEIGHT   = const(64)
-OLED_LINE_MAX = const(6)
-OLED_ADDR     = const(0x3D)
+OLED_WIDTH:    byte = const(128)
+OLED_HEIGHT:   byte = const(64)
+OLED_LINE_MAX: byte = const(6)
+OLED_ADDR:     byte = const(0x3D)
 
 class SSD1306:
-    def __init__(self, width, height, external_vcc):
+    def __init__(self, width, height, external_vcc) -> None:
         self.width = width
         self.height = height
         self.external_vcc = external_vcc
@@ -47,7 +63,7 @@ class SSD1306:
         self.poweron()
         self.init_display()
 
-    def init_display(self):
+    def init_display(self) -> None:
         for cmd in (
             SET_DISP | 0x00, # off
             # address setting
@@ -74,17 +90,17 @@ class SSD1306:
         self.fill(0)
         self.show()
 
-    def poweroff(self):
+    def poweroff(self) -> None:
         self.write_cmd(SET_DISP | 0x00)
 
-    def contrast(self, contrast):
+    def contrast(self, contrast) -> None:
         self.write_cmd(SET_CONTRAST)
         self.write_cmd(contrast)
 
-    def invert(self, invert):
+    def invert(self, invert) -> None:
         self.write_cmd(SET_NORM_INV | (invert & 1))
 
-    def show(self):
+    def show(self) -> None:
         x0 = 0
         x1 = self.width - 1
         if self.width == 64:
@@ -99,21 +115,21 @@ class SSD1306:
         self.write_cmd(self.pages - 1)
         self.write_framebuf()
 
-    def fill(self, col):
+    def fill(self, col) -> None:
         self.framebuf.fill(col)
 
-    def pixel(self, x, y, col):
+    def pixel(self, x, y, col) -> None:
         self.framebuf.pixel(x, y, col)
 
-    def scroll(self, dx, dy):
+    def scroll(self, dx, dy) -> None:
         self.framebuf.scroll(dx, dy)
 
-    def text(self, string, x, y, col=1):
+    def text(self, string, x, y, col=1) -> None:
         self.framebuf.text(string, x, y, col)
 
 
 class SSD1306_I2C(SSD1306):
-    def __init__(self, width, height, i2c, addr=OLED_ADDR, external_vcc=False):
+    def __init__(self, width, height, i2c, addr=OLED_ADDR, external_vcc=False) -> None:
         self.i2c = i2c
         self.addr = addr
         self.temp = bytearray(2)
@@ -127,38 +143,38 @@ class SSD1306_I2C(SSD1306):
         self.framebuf = framebuf.FrameBuffer1(memoryview(self.buffer)[1:], width, height)
         super().__init__(width, height, external_vcc)
 
-    def write_cmd(self, cmd):
+    def write_cmd(self, cmd) -> None:
         self.temp[0] = 0x80 # Co=1, D/C#=0
         self.temp[1] = cmd
         self.i2c.writeto(self.addr, self.temp)
 
-    def write_framebuf(self):
+    def write_framebuf(self) -> None:
         # Blast out the frame buffer using a single I2C transaction to support
         # hardware I2C interfaces.
         self.i2c.writeto(self.addr, self.buffer)
 
-    def poweron(self):
+    def poweron(self) -> None:
         pass
 
     # A convenience method to print by line number unlike the text() method.
     # This assumes that you are using a 128 x 64 pixel OLED display.
     # Line numbers are 1-6 inclusive. There is no line 0.
     #
-    def line(self, string, line_number):
+    def line(self, string, line_number) -> None:
         if line_number > 0 and line_number <= OLED_LINE_MAX:
             self.text(string,0,(line_number - 1)*10)
 
     # A convenience method to print one, and only one line on a display.
     # The entire display is erased before the single line is then displayed.
     #
-    def show_only_one_line(self, msg):
+    def show_only_one_line(self, msg) -> None:
         self.fill(0)
         self.line(msg,1)
         self.show()
 
     # A way to test a 128 x 64 pixel OLED display.
     #
-    def test_oled(self):
+    def test_oled(self) -> None :
         for i in range(1, OLED_LINE_MAX + 1):
             self.fill(0)
             self.line(f'LINE {i} ----+----', i)
