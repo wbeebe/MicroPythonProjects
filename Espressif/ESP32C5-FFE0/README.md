@@ -4,25 +4,25 @@ This application is primarily an example of reading a DHT20 I2C temperature and 
 
 * The ESP32-C5 is attached, via I2C, to an OLED display and a DHT20 temperature/humidity sensor.
 * The ESP32-C5 is an MQTT client and sends the DHT20 data out to a local MQTT server. This means the ESP32-C5 needs to connect to an external WiFi access point, such as a home WiFi system. That external WiFi AP then allows it to connect to an MQTT broker.
-* The ESP32-C5 developer board executes the latest release of MicroPython.
+* The ESP32-C5 developer board executes the latest official release of MicroPython.
 
 | Board                    | Part No. | MicroPython | ID/Folder Name | Key Feature |
 |--------------------------|----------|-------------|----------------|-------------|
 |FireBeetle 2 ESP32-C5 V1.0| DFR1236  | V 1.27.0    | ESP32C5-FFE8   | MQTT        |
 
-| Additional Parts                            | QTY | Vendor        | Product ID    |
-|---------------------------------------------|-----|---------------|---------------|
-|DHT20 I2C Temperature and Humidity Sensor    |  1  |Adafruit       | 5183 |
-|Monochrome 0.96" 128x64 OLED Graphic Display |  1  |Adafruit       | 326 |
+| Additional Parts                            | QTY | Link |
+|---------------------------------------------|-----|---------------------------------------|
+|DHT20 I2C Temperature and Humidity Sensor    |  1  | https://www.adafruit.com/product/5183 |
+|Monochrome 0.96" 128x64 OLED Graphic Display |  1  | https://www.adafruit.com/product/326 |
 
 This application presents a simple webpage once it's connected to a local WiFi access point. You can access it via its assigned IP address by looking on the attached OLED display. It will be the second line of text from the bottom edge. What follows is the web page a FireBeetle 2 ESPP32-C5 board presents running this software.
 
 ![Example webpage](assets/iphone-16-screencapture.jpg)
 
 The application's web page is dynamic.
-1. If the Temperature/Humitidity button is tapped then the page displays the local temperature in degrees F and C, and the humidity in percentage.
+1. If the Temperature/Humitidity button is tapped then the page displays the local temperature in degrees F and C, and the humidity in percentage. Continued tapping will update those values.
 2. If the OLED display isn't present, then the `Toggle OLED` button is not shown.
-3. If the ESP32-S3 fails to connect with the MQTT broker then the `MQTT Report` button is not shown.
+3. If the ESP32-C5 fails to connect with the MQTT broker then the `MQTT Report` button is not shown.
 
 ## Startup Output
 This startup output is captured from Thonny's REPL window.
@@ -122,9 +122,9 @@ Once the broker is up, open a terminal and type the following:
 ```bash
 mosquitto_sub -i "esp32_mqtt5_tester" -t "esp32/status" -c &
 ```
-Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-S3 MicroPython code module `mqtt_tools.py`.
+Leave the terminal up. The `-i` switch is the subscriber identifier, and the `-t` switch is the topic, which must match the topic in the ESP32-C5 MicroPython code module `mqtt_tools.py`.
 
-The application on the ESP32-S3 connects to the broker via the Mosquitto subscriber using topic `esp32/status`. Messages are sent from the ESP32-S3 in minified JSON and are echoed to the terminal.
+The application on the ESP32-C5 connects to the broker via the Mosquitto subscriber using topic `esp32/status`. Messages are sent from the ESP32-C5 in minified JSON and are echoed to the terminal.
 
 All ESP32-C5 minified JSON messages:
 ```
