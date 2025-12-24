@@ -85,7 +85,6 @@ class WebServer:
 
                 # Parse the request, performing the associated actions.
                 #
-                state = "UNCONNECTED"
                 if "RTH=READ" in received_str:
                     self.DHT20.read_temperature_humidity()
                 elif "OLED=ON" in received_str:

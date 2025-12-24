@@ -140,9 +140,6 @@ def page(SSID, DISPLAY, MQTT, DHT20):
         </div>
     </div>
     <form accept-charset="utf-8" method="POST">
-    <!--button class='button-red'   name="RED"   value="ON">Red</button-->
-    <!--button class='button-green' name="GREEN" value="ON">Green</button-->
-    <!--button class='button-blue'  name="BLUE"  value="ON">Blue</button-->
     <button class='button-gray'  name="RTH" value="READ">Temperature/Humidity</button>
     {OLED_BUTTON}
     {MQTT_BUTTON}
