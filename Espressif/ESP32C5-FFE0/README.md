@@ -23,6 +23,7 @@ The application's web page is dynamic.
 1. If the Temperature/Humitidity button is tapped then the page displays the local temperature in degrees F and C, and the humidity in percentage. Continued tapping will update those values.
 2. If the OLED display isn't present, then the `Toggle OLED` button is not shown.
 3. If the ESP32-C5 fails to connect with the MQTT broker then the `MQTT Report` button is not shown.
+4. The application gets time via NTP from the module `ntptime` in MicroPython. The default NTP server is used as defined in `ntptime`. Currently the time_tools is hard-coded for EST/EDT timezone. The file `webserver.py` instantiates `ntptime` and the file `time_tools.py` adjusts time using hard-coded EST/EDT offset.
 
 ## Startup Output
 This startup output is captured from Thonny's REPL window.
