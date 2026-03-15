@@ -115,7 +115,7 @@ and must be in place before a broker connection is attempted.
 import json
 
 def mqtt_callback(topic, message):
-    print(topic, message)
+    #print(topic, message)
     gc.collect()
 
 """
@@ -144,7 +144,7 @@ def broker_connect(_SSID, _DHT20):
     
     try:
         print(f"      MQTT: Broker connection start from {SSID} to {MQTT_BROKER}")
-        mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=120)
+        mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=500)
         print("      MQTT: Set receive topic callback")
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect Attempt")

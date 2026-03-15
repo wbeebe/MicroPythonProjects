@@ -1,17 +1,17 @@
 """
-    Copyright 2025 William H. Beebe, Jr.
+Copyright 2025, 2026 William H. Beebe, Jr.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 import gc
 import time
@@ -20,7 +20,7 @@ from umqtt.robust import MQTTClient
 
 import config as cfg
 import display_tools as dtools
-import ht16k33_tools as htools
+import digital_clock as dclock
 import devices
 
 MQTT_BROKER    = "192.168.0.167"
@@ -75,10 +75,10 @@ def publish(msg_type, payload):
         return False
 
 def report():
-    if htools.i2c is None:
-        htools_txt = "\"ANLED\":\"None\""
+    if dclock.i2c is None:
+        dclock_txt = "\"DCLOCK\":\"None\""
     else:
-        htools_txt = "\"ANLED\":\"Enabled\""
+        dclock_txt = "\"DCLOCK\":\"Enabled\""
         
     if dtools.display is None:
         dtools_txt = "\"OLED\":\"None\""
@@ -89,7 +89,7 @@ def report():
     compiler_txt = f"\"COMPILER\":\"{cfg.compiler}\""
     build_txt = f"\"BUILD_DATE\":\"{cfg.build_date}\""
 
-    msg = f"{dtools_txt},{htools_txt},{version_txt},{compiler_txt},{build_txt}"
+    msg = f"{dtools_txt},{dclock_txt},{version_txt},{compiler_txt},{build_txt}"
     publish("REPORT", msg)
 
 def ping_timer_callback(timer_object):
@@ -115,16 +115,7 @@ import json
 
 def mqtt_callback(topic, message):
     devices.blink_neopixel()
-    msg = json.loads(message)
-    #if 'PING' in msg and msg['PING'] != SSID:
-    #    print(msg['PING'])
-    if 'NEOP' in msg and msg['NEOP'] != SSID:
-        if msg['COLOR'] == "RED":
-            if msg['STATE'] == "ON":
-                devices.set_led_color(devices.LED_RED)
-            else:
-                devices.set_led_color(devices.LED_OFF)
-    msg.clear()
+    print(topic, message)
     gc.collect()
 
 """
@@ -150,7 +141,7 @@ def broker_connect(_SSID):
     SSID = _SSID
     try:
         print(f"      MQTT: Broker connection start from {SSID} to {MQTT_BROKER}")
-        mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=120)
+        mqttClient = MQTTClient(SSID, MQTT_BROKER, keepalive=500)
         print("      MQTT: Set receive topic callback")
         mqttClient.set_callback(mqtt_callback)
         print("      MQTT: Connect Attempt")

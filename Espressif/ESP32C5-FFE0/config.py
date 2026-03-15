@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+from micropython import const
 import platform
 import os
 
@@ -28,3 +28,6 @@ for item in platform.platform().split('-'):
 if compiler is "UNKNOWN":
     compiler = platform.python_compiler()
 build_date = os.uname().version.split(' ')[-1]
+
+TIME_ZONE = const(-4 * 3600) # DST
+#TIME_ZONE = const(-5 * 3600) # EST

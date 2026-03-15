@@ -15,8 +15,6 @@ limitations under the License.
 """
 import time
 
-print("      Main: START")
-print("      Main: END")
 from webserver import WebServer
 web = WebServer(SSID, DISPLAY, DHT20)
 web.run()

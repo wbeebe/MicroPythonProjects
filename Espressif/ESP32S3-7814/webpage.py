@@ -1,22 +1,20 @@
 """
-    Copyright 2025 William H. Beebe, Jr.
+Copyright 2025, 2026 William H. Beebe, Jr.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 import gc
 import esp
-import esp32
-
 import config
 import time_tools as ttools
 
@@ -28,13 +26,6 @@ Some parts of the web page or dynamic:
     - if there is no MQTT broker then the 'MQTT5 Test' button isn't published.
 """
 def page(SSID, DISPLAY, MQTT):
-    VFS2 = "</h2>"
-    try:
-        vsf2 = esp32.Partition('vfs2')
-        vfs2_size = vsf2.info()[3]
-        VFS2 = f"<br />vfs2 size: {vfs2_size:,} bytes</h2>"
-    except:
-        pass
     
     OLED_BUTTON=""
     if DISPLAY is not None:
@@ -92,7 +83,7 @@ def page(SSID, DISPLAY, MQTT):
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
         }}
     h1 {{font-size: 500%;color: #D35F8D;text-align: center;}}
-    h2 {{font-size: 200%;color: #5FA3D3;padding-left: 15px;}}
+    h2 {{font-size: 300%;color: #5FA3D3;padding-left: 15px;}}
     </style>
     </head>
     <body>
@@ -109,8 +100,7 @@ def page(SSID, DISPLAY, MQTT):
     <h2>{ttools.formatted_time()}</h2>
     <h2>{config.version_name} {config.compiler}</h2>
     <h2>Memory Free: {gc.mem_free():,} bytes<br />
-    Flash Size: {esp.flash_size():,} bytes
-    {VFS2}
+    Flash Size: {esp.flash_size():,} bytes</h2>
     </body>
     </html>
     """

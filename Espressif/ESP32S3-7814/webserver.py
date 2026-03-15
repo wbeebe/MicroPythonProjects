@@ -1,17 +1,17 @@
 """
-    Copyright 2025 William H. Beebe, Jr.
+Copyright 2025, 2026 William H. Beebe, Jr.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import socket
@@ -26,7 +26,7 @@ import devices
 import display_tools
 import mqtt_tools as mqtt
 import time_tools as ttools
-import ht16k33_tools as htools
+import digital_clock as dclock
 import webpage as web
 import settings
 
@@ -62,7 +62,7 @@ class WebServer:
                 attempts = 10
                 print(f"      WIFI: NTP Connection Successful")
                 print(f"      DATE: {ttools.formatted_time()}")
-                htools.start_clock();
+                dclock.start_clock();
             except Exception as ntp_time_exception:
                 print(f"      WIFI: NTP EXCEPTION {ntp_time_exception}")
                 time.sleep_ms(1000)

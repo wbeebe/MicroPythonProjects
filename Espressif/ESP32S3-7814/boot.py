@@ -1,17 +1,17 @@
 """
-    Copyright 2025 William H. Beebe, Jr.
+Copyright 2025, 2026 William H. Beebe, Jr.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import gc
@@ -22,19 +22,19 @@ import binascii
 import machine
 import ssd1306
 import display_tools
-import ht16k33_tools as htools
+import digital_clock as dclock
 
 print( "      Boot: START")
 print(f"    Memory: {gc.mem_free():,} bytes")
 print(f"     Flash: {esp.flash_size():,} bytes")
-PLATFORM = ' '.join(platform.platform().split('-'))
+PLATFORM = ' '.join(platform.platform().split(' '))
 print( "  Platform: " + PLATFORM)
 UNAME = os.uname().machine.split(' ')[-1]
 UNIQUE_ID = binascii.hexlify(machine.unique_id()).decode('ascii').upper()
 print(f" Unique ID: {UNIQUE_ID}")
 SSID = UNAME + '-' + UNIQUE_ID[-4:]
 print(f"      SSID: {SSID}")
-machine.freq(160_000_000)
+#machine.freq(160_000_000)
 print(f" CPU Clock: {machine.freq():,} Hz")
 #
 # Scan I2C bus for devices
@@ -65,13 +65,13 @@ else:
         DISPLAY.fill(0)
         print("       I2C: SSD1306 OLED Initialized")
 
-    # Check if there are HT16K33 devices attached.
+    # Check if the digital clock is attached.
     #
-    if htools.LED1_ADDR in i2c_scanned and htools.LED2_ADDR in i2c_scanned:
-        htools.init(SOFT_I2C, htools.LED1_ADDR, htools.LED2_ADDR)
-        print("       I2C: HT16K33 LEDs Initialized")
-    elif htools.LED3_ADDR in i2c_scanned and htools.LED4_ADDR in i2c_scanned:
-        htools.init(SOFT_I2C, htools.LED3_ADDR, htools.LED4_ADDR)
-        print("       I2C: HT16K33 LEDs Initialized")
+    if dclock.LED1_ADDR in i2c_scanned and dclock.LED2_ADDR in i2c_scanned:
+        dclock.init(SOFT_I2C, dclock.LED1_ADDR, dclock.LED2_ADDR)
+        print("       I2C: Digital Clock #1 Initialized")
+    elif dclock.LED3_ADDR in i2c_scanned and dclock.LED4_ADDR in i2c_scanned:
+        dclock.init(SOFT_I2C, dclock.LED3_ADDR, dclock.LED4_ADDR)
+        print("       I2C: Digital Clock #2 Initialized")
 
 print("      Boot: END")

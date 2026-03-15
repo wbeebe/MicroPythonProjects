@@ -1,17 +1,17 @@
 # ESP32S3-7814
-## Major Changes
+## Main Features
 
-The ESP32-S3 developer board still executes MicroPython, in this case the latest pre-release.
+The ESP32-S3 developer board executes the latest official MicroPython release.
 
-| Board                    | Version | ID           | Folder Name   | Feature | AD  |
-|--------------------------|---------|--------------|---------------|---------|-----|
-|ESP32-S3-DevKitC-1.1-N32R8| 1.27.0P | ESP32S3-7814 | ESP32S3-7814  | MQTT    | Yes |
+| Board                    | Version | ID/Folder Name | Key Feature |
+|--------------------------|---------|----------------|-------------|
+|ESP32-S3-DevKitC-1.1-N32R8| 1.27.0  | ESP32S3-7814   | MQTT        |
 
 ESP32S3-7814 is no longer a stand-alone WiFi access point. Because of the addition of MQTT functionality, it now needs to connect to an external WiFi access point, such as a home WiFi system. That external WiFi AP then allows it to connect to an MQTT broker.
 
 This is the web page a fully functioning ESP32-S3 developer board presents now.
 
-![Example webpage](../Assets/ESP32-S3-7814-Screenshot_20250708.png)
+<img src="assets/ESP32S3-7814.PNG" width="400"/>
 
 The view the web page presents is dynamic. Here's what that means:
 1. If the OLED display isn't present, then the `Toggle OLED` button is not shown.
@@ -22,16 +22,16 @@ The view the web page presents is dynamic. Here's what that means:
 This startup output is captured from Thonny's REPL window.
 ```
       Boot: START
-    Memory: 8,172,048 bytes
+    Memory: 8,166,208 bytes
      Flash: 33,554,432 bytes
-  Platform: MicroPython 1.26.0 preview xtensa IDFv5.4.1 with newlib4.3.0
+  Platform: MicroPython-1.27.0-xtensa-IDFv5.5.2-with-newlib4.3.0
  Unique ID: 68B6B33D7814
       SSID: ESP32S3-7814
- CPU Clock: 160,000,000 Hz
+ CPU Clock: 240,000,000 Hz
        I2C: SoftI2C(scl=2, sda=1, freq=500000)
        I2C: Devices found: ['0x3d', '0x70', '0x71']
        I2C: SSD1306 OLED Initialized
-       I2C: HT16K33 LEDs Initialized
+       I2C: Digital Clock #1 Initialized
       Boot: END
       Main: START
        LED: COLORS
@@ -39,16 +39,16 @@ This startup output is captured from Thonny's REPL window.
   JOYSTICK: ENABLE
       Main: END
       WIFI: Connected
-      WIFI: 192.168.0.174
+      WIFI: 192.168.0.175
       WIFI: NTP Connection Attempt #1
       WIFI: NTP Connection Successful
-      DATE: 8:19 AM  Monday 7 July 2025
-      MQTT: Broker connection start from ESP32S3-7814 to 192.168.0.210
-      MQTT: Connect
-      MQTT: Set callback
-      MQTT: Subscribe to topic b'esp32/status'
-      MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=120000)
-      MQTT: Broker connection successful to 192.168.0.210
+      DATE: 11:57 AM  Sunday 28 December 2025
+      MQTT: Broker connection start from ESP32S3-7814 to 192.168.0.167
+      MQTT: Set receive topic callback
+      MQTT: Connect Attempt
+      MQTT: Subscribe to topic esp32/status
+      MQTT: Init ping timer: Timer(3, mode=PERIODIC, period=1000)
+      MQTT: Broker connection successfull to 192.168.0.167
 ```
 If the board fails to connect to the MQTT broker, this is the last part of the output:
 ```

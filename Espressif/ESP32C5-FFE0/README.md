@@ -1,4 +1,4 @@
-# ESP32C5-FFE8
+# ESP32C5-FFE0
 ## Main Features
 This application is primarily an example of reading a DHT20 I2C temperature and humidity sensor and displaying its output on a webpage, usually via a smartphone browser. The board used is part of a DFRobots DFR1236 FireBeetle 2 ESP32-C5 Development Kit (https://www.dfrobot.com/product-2977.html) 
 
@@ -17,7 +17,7 @@ This application is primarily an example of reading a DHT20 I2C temperature and 
 
 This application presents a simple webpage once it's connected to a local WiFi access point. You can access it via its assigned IP address by looking on the attached OLED display. It will be the second line of text from the bottom edge. What follows is the web page a FireBeetle 2 ESPP32-C5 board presents running this software.
 
-![Example webpage](assets/iphone-16-screencapture.jpg)
+<img src="assets/iphone-16-screencapture.png" width="400"/>
 
 The application's web page is dynamic.
 1. If the Temperature/Humitidity button is tapped then the page displays the local temperature in degrees F and C, and the humidity in percentage. Continued tapping will update those values.
@@ -29,9 +29,9 @@ The application's web page is dynamic.
 This startup output is captured from Thonny's REPL window.
 ```
       Boot: START
-    Memory: 160,672 bytes
+    Memory: 161,200 bytes
      Flash: 4,194,304 bytes
-  Platform: MicroPython 1.27.0 riscv IDFv5.5.1 with newlib4.3.0
+  Platform: MicroPython 1.27.0 riscv IDFv5.5.2 with newlib4.3.0
  Unique ID: 30EDA0FEFFE0
       SSID: ESP32C5-FFE0
  CPU Clock: 240,000,000 Hz
@@ -40,13 +40,11 @@ This startup output is captured from Thonny's REPL window.
        I2C: SSD1306 OLED Initialized
        I2C: DHT20 Initialized
       Boot: END
-      Main: START
-      Main: END
       WIFI: Connected
-      WIFI: 192.168.0.128
+      WIFI: 192.168.0.126
       WIFI: NTP Connection Attempt #1
       WIFI: NTP Connection Successful
-      DATE: 9:14 PM  Monday 22 December 2025
+      DATE: 12:20 PM  Sunday 15 March 2026
       MQTT: Broker connection start from ESP32C5-FFE0 to 192.168.0.167
       MQTT: Set receive topic callback
       MQTT: Connect Attempt
@@ -57,7 +55,7 @@ This startup output is captured from Thonny's REPL window.
 If the board fails to connect to the MQTT broker, this is the last part of the output:
 ```
 ...
-      MQTT: Broker connection start from ESP32C5-FFE8 to 192.168.0.167
+      MQTT: Broker connection start from ESP32C5-FFE0 to 192.168.0.167
       MQTT: Set callback
       MQTT: Connect
       MQTT: Broker connection failure to 192.168.0.167
