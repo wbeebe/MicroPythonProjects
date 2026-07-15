@@ -4,12 +4,12 @@
 
 Since 2020 I have been using MicroPython on a number of embedded devices. My
 journey with MicroPython started with PyCom devices in 2020. The PyCom device
-I worked with was the FiPy. The was built around the Espressif 32-bit dual core
+I worked with was the FiPy. It was built around the Espressif 32-bit dual core
 LX6 processor, with 4 MB of memory and 8 MB of FLASH. It had many other features,
 notably LoRa, Sigfox, WiFi, Bluetooth Low Energy (BLE), and cellular LTE–CAT M1/NB1.
 
 Pycom shipped the FiPy with their forked version of MicroPython 1.11. They added
-drivers for LoRa, Sigfox, and LTE, as well as MicroPython support for those
+drivers for LoRa, Sigfox, and LTE, as well as additional MicroPython support for those
 devices.
 
 Using the FiPy and the PyTracker, I created a LoRa-based mesh networked portable
@@ -33,19 +33,20 @@ the ESP32-S3. The ESP32-S3 had WiFi and BLE, and was based on the LX7 core. The
 boards were sold with various mixes of RAM and FLASH amounts; I eventually settled
 on N8R8 (8 MB FLASH, 8 MB RAM) and N32R8 (32 MB of FLASH, 8 MB of RAM). I also
 downloaded and installed Espressif's ESP-IDF framework and started to program
-the boards in C and C++. It was with release 4.x that I started using the ESP-IDF.
+the boards in C and C++. I started using ESP-IDF with version 4.
 
-I also forked the MicroPython source repo. It was from my fork that I would clone
-down to my development system (Linx Mint) and build my own MicroPython firmware,
-which I then flashed onto the boards. I did this primarily to create a firewall
-between developers checking into the MicroPython project and work I was doing
-at the time. One of the side benefits of having my own copy is that I could
-see all the changes that occured on the main project branch before syncing my
-copy, and then syncing my github copy with my system copy.
+I then forked a personal copy of the MicroPython source repo.
+It was from my fork that I would clone down to my development system (Linx Mint) 
+and build my own MicroPython firmware, which I then flashed onto the boards. 
+I did this primarily to create a firewall between developers checking into the
+official MicroPython project. One of the side benefits of having my own copy is that I could
+see all the changes that occured on the main project branch before syncing my copy, 
+and then syncing my github copy with my system copy.
 
 I also had the benefit of having firmware with up-to-date fixes and being built
 with Espressif's latest tools. It concerned me that the MicroPython project had
-fallen behind its using up-to-date Espressif tooling.
+fallen behind its use of up-to-date Espressif tooling at the time. This is now
+no longer the case, but I keep this habit going regardless.
 
 The fundamental issue at the time was that MicroPython did not support a number
 of advanced Espressif boards. I had to configure my copy to support the type
@@ -88,7 +89,8 @@ the binary machine.unique_id() into text.
 ### WARNING
 
 There's a lot of duplicated code across all the devices. It all works, but
-there are some devices with more 'correct' code than others.
+there are some devices with more 'correct' code than others. I know it's a mess,
+but it's my mess, and I can live with it.
 
 ## Espressif Device Listing
 Please check the [Espressif README](/Espressif/README.md) for specific information.
