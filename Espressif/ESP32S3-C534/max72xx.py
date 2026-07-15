@@ -1,7 +1,7 @@
 """
 MAX7219/MAX7221 cascadable 8x8 LED matrix management class.
 
-Copyright 2024 William H. Beebe, Jr
+Copyright 2026 William H. Beebe, Jr
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ DISABLE = const(1)
 """
 Controller class for cascading MAX72xx 8x8 LED matrices.
 
-# Example code for MicroPython 1.22 running on an
+# Example code running on MicroPython v1.28 flashed onto an
 # ESP32-S3-DevKitC-1.1-N8R8
 
 from machine import Pin, SPI

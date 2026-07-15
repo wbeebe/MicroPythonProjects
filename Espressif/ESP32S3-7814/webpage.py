@@ -36,7 +36,11 @@ def page(SSID, DISPLAY, MQTT):
         MQTT_BUTTON="""<button class='button-off'   name="MQTT" value="ON">MQTT Report</button>"""
 
     html = f"""
-    <html><head><title>{SSID}</title>
+    <html>
+    <head>
+    <meta http-equiv=\"Content-type\" content=\"text/html;charset=utf-8\"
+    name=\"viewport\" content=\"width=device-width, initial-scane=1.0\">
+    <title>{SSID}</title>
     <style>
     html {{
         font-family: sans-serif;
@@ -96,10 +100,9 @@ def page(SSID, DISPLAY, MQTT):
     {OLED_BUTTON}
     {MQTT_BUTTON}
     </form>
-    <hr />
     <h2>{ttools.formatted_time()}</h2>
-    <h2>{config.version_name} {config.compiler}</h2>
-    <h2>Memory Free: {gc.mem_free():,} bytes<br />
+    <h2>{config.version_name} {config.compiler}<br />
+    Memory Free: {gc.mem_free():,} bytes<br />
     Flash Size: {esp.flash_size():,} bytes</h2>
     </body>
     </html>

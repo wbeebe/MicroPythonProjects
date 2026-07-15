@@ -115,7 +115,7 @@ import json
 
 def mqtt_callback(topic, message):
     devices.blink_neopixel()
-    print(topic, message)
+    #print(topic, message)
     gc.collect()
 
 """

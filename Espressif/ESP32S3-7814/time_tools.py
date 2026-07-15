@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import time
+import config as cfg
 
 def formatted_time():
     dayname = [
@@ -39,7 +40,7 @@ def formatted_time():
         "November",
         "December" ]
 
-    now = time.localtime(time.time() + (-5 * 3600))
+    now = time.localtime(time.time() + cfg.TIME_ZONE)
     day_name = dayname[now[6]]
     month_day = now[2]
     month_name = monthname[now[1]-1]

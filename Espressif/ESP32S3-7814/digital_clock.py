@@ -13,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
 from machine import Timer
 import time
 from ht16k33 import HT16K33Segment14
+import config as cfg
 
 LED1_ADDR = const(0x70)
 LED2_ADDR = const(0x71)
@@ -28,8 +28,7 @@ led1 = None
 led2 = None
 
 def clock_display_callback(timer_object):
-    # Time calculation is hard-coded for EST/EDT (New York America).
-    now = time.localtime(time.time() + (-5 * 3600))
+    now = time.localtime(time.time() + cfg.TIME_ZONE)
     hours = now[3]
     minutes = now[4]
     seconds = now[5]

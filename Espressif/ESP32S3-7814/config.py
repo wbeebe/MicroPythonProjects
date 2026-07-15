@@ -13,18 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
-import platform
+from micropython import const
 import os
+import platform
 
 if "preview" in platform.platform():
-    version_name = ' '.join(platform.platform().split('-')[0:3])
+    version_name = " ".join(platform.platform().split("-")[0:3])
 else:
-    version_name = ' '.join(platform.platform().split('-')[0:2])
-compiler="UNKNOWN"
-for item in platform.platform().split('-'):
+    version_name = " ".join(platform.platform().split("-")[0:2])
+compiler = "UNKNOWN"
+for item in platform.platform().split("-"):
     if "IDF" in item:
         compiler = item
-if compiler is "UNKNOWN":
+if compiler == "UNKNOWN":
     compiler = platform.python_compiler()
-build_date = os.uname().version.split(' ')[-1]
+build_date = os.uname().version.split(" ")[-1]
+TIME_ZONE = const(-4 * 3600) # DST
+#TIME_ZONE = const(-5 * 3600) # EST

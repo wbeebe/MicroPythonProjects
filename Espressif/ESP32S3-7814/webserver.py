@@ -14,21 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import gc
 import socket
 import time
-import gc
-import ntptime
+
 import network
+import ntptime
 from network import WLAN
 
-import config
 import devices
+import digital_clock as dclock
 import display_tools
 import mqtt_tools as mqtt
-import time_tools as ttools
-import digital_clock as dclock
-import webpage as web
 import settings
+import time_tools as ttools
+import webpage as web
+
 
 class WebServer:
     SSID = None
@@ -62,7 +63,7 @@ class WebServer:
                 attempts = 10
                 print(f"      WIFI: NTP Connection Successful")
                 print(f"      DATE: {ttools.formatted_time()}")
-                dclock.start_clock();
+                dclock.start_clock()
             except Exception as ntp_time_exception:
                 print(f"      WIFI: NTP EXCEPTION {ntp_time_exception}")
                 time.sleep_ms(1000)
@@ -90,15 +91,15 @@ class WebServer:
                 #
                 if "RED=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_RED)
-                    mqtt_message = f"\"COLOR\":\"RED\",\"STATE\":\"{state}\""
+                    mqtt_message = f'"COLOR":"RED","STATE":"{state}"'
                     mqtt.publish("NEOP", mqtt_message)
                 elif "GREEN=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_GREEN)
-                    mqtt_message = f"\"COLOR\":\"GREEN\",\"STATE\":\"{state}\""
+                    mqtt_message = f'"COLOR":"GREEN","STATE":"{state}"'
                     mqtt.publish("NEOP", mqtt_message)
                 elif "BLUE=ON" in received_str:
                     state = devices.toggle_led_color(devices.LED_BLUE)
-                    mqtt_message = f"\"COLOR\":\"BLUE\",\"STATE\":\"{state}\""
+                    mqtt_message = f'"COLOR":"BLUE","STATE":"{state}"'
                     mqtt.publish("NEOP", mqtt_message)
                 elif "CYCLE=ON" in received_str:
                     devices.cycle_colors()

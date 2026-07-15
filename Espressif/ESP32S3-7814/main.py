@@ -14,26 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import time
+import devices
+import joystick
+import seven_segment
+from webserver import WebServer
 
 print("      Main: START")
 print("       LED: COLORS")
-import devices
 devices.cycle_colors()
 
 print(" 7 SEG LED: TESTS")
-import seven_segment
 seven_segment.test_segments()
 seven_segment.test_numbers()
-#seven_segment.turn_on_all_segments()
-#time.sleep(5)
-#seven_segment.turn_off_all_segments()
+# seven_segment.turn_on_all_segments()
+# time.sleep(5)
+# seven_segment.turn_off_all_segments()
 
 print("  JOYSTICK: ENABLE")
-import joystick
-joystick.enable_center_button();
-
+joystick.enable_center_button()
 print("      Main: END")
-from webserver import WebServer
 web = WebServer(SSID, DISPLAY)
 web.run()

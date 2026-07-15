@@ -14,27 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import gc
-import esp
-import platform
-import os
 import binascii
-import machine
-import ssd1306
-import display_tools
-import digital_clock as dclock
+import gc
+import os
+import platform
 
-print( "      Boot: START")
+import esp
+import machine
+
+import digital_clock as dclock
+import ssd1306
+
+print("      Boot: START")
 print(f"    Memory: {gc.mem_free():,} bytes")
 print(f"     Flash: {esp.flash_size():,} bytes")
-PLATFORM = ' '.join(platform.platform().split(' '))
-print( "  Platform: " + PLATFORM)
-UNAME = os.uname().machine.split(' ')[-1]
-UNIQUE_ID = binascii.hexlify(machine.unique_id()).decode('ascii').upper()
+PLATFORM = " ".join(platform.platform().split(" "))
+print("  Platform: " + PLATFORM)
+UNAME = os.uname().machine.split(" ")[-1]
+UNIQUE_ID = binascii.hexlify(machine.unique_id()).decode("ascii").upper()
 print(f" Unique ID: {UNIQUE_ID}")
-SSID = UNAME + '-' + UNIQUE_ID[-4:]
+SSID = UNAME + "-" + UNIQUE_ID[-4:]
 print(f"      SSID: {SSID}")
-#machine.freq(160_000_000)
+# machine.freq(160_000_000)
 print(f" CPU Clock: {machine.freq():,} Hz")
 #
 # Scan I2C bus for devices
@@ -51,8 +52,10 @@ DISPLAY = None
 if len(i2c_scanned) == 0:
     print("       I2C: No Devices Found")
 else:
-    print("       I2C: Devices found:", [hex(device_address)
-        for device_address in i2c_scanned])
+    print(
+        "       I2C: Devices found:",
+        [hex(device_address) for device_address in i2c_scanned],
+    )
 
     # Check if there is an SSD1306 display attached.
     #
